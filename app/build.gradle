@@ -43,6 +43,8 @@ dependencies {
     implementation deps.dagger.runtime
     implementation deps.dagger.android
     implementation deps.dagger.android_support
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
     kapt deps.dagger.android_support_compiler
     kapt deps.dagger.compiler
     kaptAndroidTest deps.dagger.compiler
