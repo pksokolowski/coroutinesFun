@@ -5,6 +5,6 @@
 
     <fragment
         android:id="@+id/startScreenFragment"
-        android:name="com.github.pksokolowski.coroutinesfun.StartScreenFragment"
+        android:name="com.github.pksokolowski.coroutinesfun.features.start.StartScreenFragment"
         android:label="StartScreenFragment" />
 </navigation>
