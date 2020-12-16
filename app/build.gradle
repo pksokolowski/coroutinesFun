@@ -32,6 +32,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -44,8 +48,7 @@ dependencies {
     implementation deps.dagger_hilt.runtime
     kapt deps.dagger_hilt.compiler
 
-    implementation deps.navigation.fragment
-    implementation deps.navigation.ui
+    implementation deps.navigation.fragment_ktx
     implementation deps.navigation.ui_ktx
 
     testImplementation deps.junit

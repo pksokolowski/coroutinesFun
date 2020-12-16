@@ -2,6 +2,7 @@ package com.github.pksokolowski.coroutinesfun.di
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import com.github.pksokolowski.coroutinesfun.features.standalones.StandAlonesFragment
 import com.github.pksokolowski.coroutinesfun.features.start.StartScreenFragment
 import javax.inject.Inject
 
@@ -10,11 +11,9 @@ class MainFragmentFactory @Inject constructor(
 ) : FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
         return when (className) {
-            StartScreenFragment::class.java.name -> {
-                StartScreenFragment(someDependency)
-            }
-            else ->
-                super.instantiate(classLoader, className)
+            StartScreenFragment::class.java.name -> StartScreenFragment(someDependency)
+            StandAlonesFragment::class.java.name -> StandAlonesFragment()
+            else -> super.instantiate(classLoader, className)
         }
     }
 }
