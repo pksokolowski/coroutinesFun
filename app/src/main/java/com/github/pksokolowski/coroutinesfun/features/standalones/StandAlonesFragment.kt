@@ -1,5 +1,6 @@
 package com.github.pksokolowski.coroutinesfun.features.standalones
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -65,12 +66,14 @@ class StandAlonesFragment : Fragment() {
 
     private val commands = hashMapOf(
         "" to ::displayAllKnownCommands,
+        "simple1" to { viewModel.runSomeFunCoroutines() }
     )
 
     fun displayString(@StringRes content: Int) = displayString(getString(content))
 
+    @SuppressLint("SetTextI18n")
     private fun displayString(content: String) {
-        binding.output.text = content
+        binding.output.text = "${binding.output.text}\n$content"
     }
 
     private fun displayAllKnownCommands() {
