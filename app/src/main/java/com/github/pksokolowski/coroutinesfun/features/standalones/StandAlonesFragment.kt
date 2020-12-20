@@ -51,6 +51,16 @@ class StandAlonesFragment : Fragment() {
 
         displayAllKnownCommands()
         binding.input.requestFocus()
+
+        observeViewModelOutput()
+    }
+
+    private fun observeViewModelOutput() {
+        lifecycleScope.launchWhenCreated {
+            viewModel.output.collect { message ->
+                displayString(message)
+            }
+        }
     }
 
     private val commands = hashMapOf(
@@ -72,7 +82,12 @@ class StandAlonesFragment : Fragment() {
         )
     }
 
+    private fun clearOutput() {
+        binding.output.text = ""
+    }
+
     private fun handleCommand(input: String) {
+        clearOutput()
         val command = commands[input]
         if (command == null) {
             displayAllKnownCommands()

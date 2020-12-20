@@ -49,6 +49,9 @@ dependencies {
     implementation deps.dagger_hilt.runtime
     kapt deps.dagger_hilt.compiler
 
+    implementation deps.coroutines.core
+    implementation deps.coroutines.android
+
     implementation deps.navigation.fragment_ktx
     implementation deps.navigation.ui_ktx
 
