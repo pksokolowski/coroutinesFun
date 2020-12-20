@@ -45,6 +45,7 @@ dependencies {
     implementation deps.material
     implementation deps.constraint_layout
 
+    implementation deps.dagger_hilt.lifecycle_viewmodel
     implementation deps.dagger_hilt.runtime
     kapt deps.dagger_hilt.compiler
 

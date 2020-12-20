@@ -7,6 +7,7 @@ versions.constraint_layout = "2.0.0-alpha2"
 versions.core_ktx = "1.1.0"
 versions.coroutines = "1.3.7"
 versions.dagger_hilt = "2.28-alpha"
+versions.dagger_hilt_lifecycle = "1.0.0-alpha02"
 versions.dexmaker = "2.2.0"
 versions.espresso = "3.2.0"
 versions.fragment = "1.2.1"
@@ -64,6 +65,7 @@ deps.constraint_layout = "androidx.constraintlayout:constraintlayout:$versions.c
 deps.core_ktx = "androidx.core:core-ktx:$versions.core_ktx"
 
 def dagger_hilt = [:]
+dagger_hilt.lifecycle_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$versions.dagger_hilt_lifecycle"
 dagger_hilt.runtime = "com.google.dagger:hilt-android:$versions.dagger_hilt"
 dagger_hilt.compiler = "com.google.dagger:hilt-android-compiler:$versions.dagger_hilt"
 dagger_hilt.plugin = "com.google.dagger:hilt-android-gradle-plugin:$versions.dagger_hilt"
@@ -147,4 +149,5 @@ def addRepos(RepositoryHandler handler) {
     handler.google()
     handler.jcenter()
 }
+
 ext.addRepos = this.&addRepos

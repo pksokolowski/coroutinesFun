@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">CoroutinesFun</string>
+
     <string name="standalones_type_command_hint">type command here...</string>
+    <string name="standalones_known_commands">Try one of the below commands:\n%s</string>
 
     <string name="start_screen_button_stand_alones">Stand-alone samples</string>
 </resources>
