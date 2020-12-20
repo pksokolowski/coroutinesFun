@@ -66,7 +66,9 @@ class StandAlonesFragment : Fragment() {
 
     private val commands = hashMapOf(
         "" to ::displayAllKnownCommands,
-        "simple1" to { viewModel.runSomeFunCoroutines() }
+        "simple1" to { viewModel.runSomeFunCoroutines() },
+        "fakenet" to { viewModel.runHandleExceptions(false) },
+        "fakenet-exception" to { viewModel.runHandleExceptions((true)) }
     )
 
     fun displayString(@StringRes content: Int) = displayString(getString(content))

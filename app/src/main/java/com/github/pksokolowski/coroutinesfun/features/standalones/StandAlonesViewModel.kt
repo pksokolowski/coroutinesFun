@@ -3,10 +3,9 @@ package com.github.pksokolowski.coroutinesfun.features.standalones
 import androidx.lifecycle.ViewModel
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import java.lang.IllegalStateException
 
 class StandAlonesViewModel @ViewModelInject constructor(
 
@@ -48,6 +47,22 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 and a prime  = $prime
             """.trimIndent()
             )
+        }
+    }
+
+    fun runHandleExceptions(shouldFail: Boolean) {
+        fun getUserNameById(id: Long): String {
+            if (shouldFail) throw IllegalStateException("ShouldFails was set to true!")
+            return "Stefan$id"
+        }
+
+        val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("Exception thrown during fake network request: ${throwable.localizedMessage}")
+        }
+
+        viewModelScope.launch(Dispatchers.IO + handler) {
+            val userName = getUserNameById(1500)
+            output("Username = $userName")
         }
     }
 }
