@@ -33,6 +33,10 @@ class StartScreenFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.downloadsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_startScreenFragment_to_downloadsFragment)
+        }
+
         binding.button.setOnClickListener {
             findNavController().navigate(R.id.action_startScreenFragment_to_standAlonesFragment)
         }

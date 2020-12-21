@@ -10,9 +10,16 @@
         <action
             android:id="@+id/action_startScreenFragment_to_standAlonesFragment"
             app:destination="@id/standAlonesFragment" />
+        <action
+            android:id="@+id/action_startScreenFragment_to_downloadsFragment"
+            app:destination="@id/downloadsFragment" />
     </fragment>
     <fragment
         android:id="@+id/standAlonesFragment"
         android:name="com.github.pksokolowski.coroutinesfun.features.standalones.StandAlonesFragment"
         android:label="StandAlonesFragment" />
+    <fragment
+        android:id="@+id/downloadsFragment"
+        android:name="com.github.pksokolowski.coroutinesfun.features.downloads.DownloadsFragment"
+        android:label="DownloadsFragment" />
 </navigation>

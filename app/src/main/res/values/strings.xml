@@ -4,5 +4,9 @@
     <string name="standalones_type_command_hint">type command here...</string>
     <string name="standalones_known_commands">Try one of the below commands:\n%s</string>
 
+    <string name="start_screen_button_downloads">Downloads</string>
     <string name="start_screen_button_stand_alones">Stand-alone samples</string>
+
+    <string name="downloads_button_cat_picture">Cat picture</string>
+    <string name="downloads_button_file_not_found">File not found</string>
 </resources>
