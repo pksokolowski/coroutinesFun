@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.github.pksokolowski.coroutinesfun.R
@@ -53,6 +54,7 @@ class DownloadsFragment() : Fragment() {
         lifecycleScope.launchWhenStarted {
             val catPicDeferred = lifecycleScope.async(Dispatchers.IO) { getImage(url) }
 
+            binding.progressBar.isVisible = true
             try {
                 val catPic = catPicDeferred.await()
                 showImage(catPic)
@@ -61,6 +63,7 @@ class DownloadsFragment() : Fragment() {
             } catch (e: Exception) {
                 setDrawable(R.drawable.ic_baseline_error_outline_24)
             }
+            binding.progressBar.visibility = View.INVISIBLE
         }
     }
 
