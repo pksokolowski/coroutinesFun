@@ -46,4 +46,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
+
+    <CheckBox
+        android:id="@+id/gray_only"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/downloads_checkbox_gray"
+        app:layout_constraintEnd_toStartOf="@+id/downloadCatPicture"
+        app:layout_constraintStart_toEndOf="@+id/download_file_not_found"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,4 +9,5 @@
 
     <string name="downloads_button_cat_picture">Cat picture</string>
     <string name="downloads_button_file_not_found">File not found</string>
+    <string name="downloads_checkbox_gray">Gray</string>
 </resources>

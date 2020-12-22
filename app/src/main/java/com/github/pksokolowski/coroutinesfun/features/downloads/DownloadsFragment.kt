@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.github.pksokolowski.coroutinesfun.R
 import com.github.pksokolowski.coroutinesfun.databinding.FragmentDownloadsBinding
 import com.github.pksokolowski.coroutinesfun.utils.CAT_PICTURE_URL
+import com.github.pksokolowski.coroutinesfun.utils.filterOutColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import java.io.FileNotFoundException
@@ -52,12 +53,20 @@ class DownloadsFragment() : Fragment() {
 
     private fun downloadImage(url: String) {
         lifecycleScope.launchWhenStarted {
-            val catPicDeferred = lifecycleScope.async(Dispatchers.IO) { getImage(url) }
+            val picDeferred = lifecycleScope.async(Dispatchers.IO) { getImage(url) }
 
             binding.progressBar.isVisible = true
             try {
-                val catPic = catPicDeferred.await()
-                showImage(catPic)
+                val pic = picDeferred.await()
+
+                if (binding.grayOnly.isChecked) {
+                    val grayVersionDeferred =
+                        lifecycleScope.async(Dispatchers.Default) { pic.filterOutColors() }
+
+                    showImage(grayVersionDeferred.await())
+                } else {
+                    showImage(pic)
+                }
             } catch (e: FileNotFoundException) {
                 setDrawable(R.drawable.ic_baseline_broken_image_24)
             } catch (e: Exception) {
