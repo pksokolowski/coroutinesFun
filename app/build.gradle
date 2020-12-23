@@ -48,9 +48,12 @@ dependencies {
     implementation deps.dagger_hilt.lifecycle_viewmodel
     implementation deps.dagger_hilt.runtime
     kapt deps.dagger_hilt.compiler
+    kapt deps.dagger_hilt.androidx_compiler
 
     implementation deps.coroutines.core
     implementation deps.coroutines.android
+
+    implementation deps.lifecycle.livedata_ktx
 
     implementation deps.navigation.fragment_ktx
     implementation deps.navigation.ui_ktx

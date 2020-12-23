@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_startScreenFragment_to_downloadsFragment"
             app:destination="@id/downloadsFragment" />
+        <action
+            android:id="@+id/action_startScreenFragment_to_flowsFragment"
+            app:destination="@id/flowsFragment" />
     </fragment>
     <fragment
         android:id="@+id/standAlonesFragment"
@@ -22,4 +25,8 @@
         android:id="@+id/downloadsFragment"
         android:name="com.github.pksokolowski.coroutinesfun.features.downloads.DownloadsFragment"
         android:label="DownloadsFragment" />
+    <fragment
+        android:id="@+id/flowsFragment"
+        android:name="com.github.pksokolowski.coroutinesfun.features.flows.FlowsFragment"
+        android:label="FlowsFragment" />
 </navigation>

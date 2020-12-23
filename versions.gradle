@@ -69,6 +69,7 @@ def dagger_hilt = [:]
 dagger_hilt.lifecycle_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$versions.dagger_hilt_lifecycle"
 dagger_hilt.runtime = "com.google.dagger:hilt-android:$versions.dagger_hilt"
 dagger_hilt.compiler = "com.google.dagger:hilt-android-compiler:$versions.dagger_hilt"
+dagger_hilt.androidx_compiler = "androidx.hilt:hilt-compiler:$versions.dagger_hilt_lifecycle"
 dagger_hilt.plugin = "com.google.dagger:hilt-android-gradle-plugin:$versions.dagger_hilt"
 deps.dagger_hilt = dagger_hilt
 

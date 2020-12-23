@@ -33,6 +33,10 @@ class StartScreenFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.flowsButton.setOnClickListener {
+            findNavController().navigate(R.id.action_startScreenFragment_to_flowsFragment)
+        }
+
         binding.downloadsButton.setOnClickListener {
             findNavController().navigate(R.id.action_startScreenFragment_to_downloadsFragment)
         }
