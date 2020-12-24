@@ -12,12 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import com.github.pksokolowski.coroutinesfun.R
 import com.github.pksokolowski.coroutinesfun.databinding.FragmentStandalonesBinding
 import com.github.pksokolowski.coroutinesfun.utils.textChanges
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class StandAlonesFragment : Fragment() {
 
     private val viewModel: StandAlonesViewModel by viewModels()
