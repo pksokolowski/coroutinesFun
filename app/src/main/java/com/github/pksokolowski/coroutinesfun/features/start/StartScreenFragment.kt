@@ -44,5 +44,9 @@ class StartScreenFragment(
         binding.button.setOnClickListener {
             findNavController().navigate(R.id.action_startScreenFragment_to_standAlonesFragment)
         }
+
+        binding.persistenceButton.setOnClickListener {
+            findNavController().navigate(R.id.action_startScreenFragment_to_persistenceFragment)
+        }
     }
 }

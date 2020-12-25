@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">CoroutinesFun</string>
 
-    <string name="start_screen_button_downloads">Downloads</string>
-    <string name="start_screen_button_stand_alones">Stand-alone samples</string>
     <string name="start_screen_button_flows">Flows</string>
+    <string name="start_screen_button_downloads">Downloads</string>
+    <string name="start_screen_button_persistence">Room Persistence</string>
+    <string name="start_screen_button_stand_alones">Stand-alone samples</string>
 
     <string name="standalones_type_command_hint">type command here...</string>
     <string name="standalones_known_commands">Try one of the below commands:\n%s</string>
@@ -16,4 +17,12 @@
     <string name="flows_user_email">User e-mail address</string>
     <string name="flows_button_cycle_user_data">cycle user data</string>
     <string name="flows_user_physical_address">User address</string>
+
+    <string name="persistence_input_hint_description">animal description</string>
+    <string name="persistence_input_hint_name">animal name</string>
+    <string name="persistence_button_save_animal">Save animal</string>
+    <string name="persistence_button_load_next_animal">Show next animal</string>
+    <string name="persistence_label_create_new_animal">Create new animal</string>
+    <string name="persistence_error_required_field">Required field</string>
+
 </resources>

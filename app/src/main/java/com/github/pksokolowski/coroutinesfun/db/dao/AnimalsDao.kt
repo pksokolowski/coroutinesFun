@@ -10,6 +10,9 @@ interface AnimalsDao {
     @Query("SELECT * FROM animals WHERE id = :id")
     suspend fun getAnimalById(id: Long): AnimalDto?
 
+    @Query("SELECT id FROM animals ORDER BY id ASC")
+    suspend fun getAllKnownAnimalsIds(): List<Long>
+
     @Insert
     suspend fun insertAnimal(animalDto: AnimalDto): Long
 }

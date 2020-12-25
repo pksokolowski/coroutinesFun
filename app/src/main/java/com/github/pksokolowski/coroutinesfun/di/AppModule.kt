@@ -3,6 +3,9 @@ package com.github.pksokolowski.coroutinesfun.di
 import android.app.Application
 import androidx.room.Room
 import com.github.pksokolowski.coroutinesfun.db.AppDatabase
+import com.github.pksokolowski.coroutinesfun.db.dao.AnimalsDao
+import com.github.pksokolowski.coroutinesfun.repository.AnimalsRepository
+import com.github.pksokolowski.coroutinesfun.repository.implementations.AnimalsRepositoryImpl
 import com.github.pksokolowski.coroutinesfun.utils.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -28,4 +31,16 @@ object AppModule {
             .fallbackToDestructiveMigration()
             .build()
     }
+
+    @Singleton
+    @Provides
+    fun providesAnimalsDao(db: AppDatabase): AnimalsDao {
+        return db.animalsDao()
+    }
+
+    @Provides
+    fun providesAnimalsRepository(animalsDao: AnimalsDao): AnimalsRepository {
+        return AnimalsRepositoryImpl(animalsDao)
+    }
+
 }

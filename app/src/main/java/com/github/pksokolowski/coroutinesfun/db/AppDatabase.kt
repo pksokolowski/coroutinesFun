@@ -9,7 +9,7 @@ import com.github.pksokolowski.coroutinesfun.db.dto.AnimalDto
     entities = [
         AnimalDto::class,
     ],
-    version = 12,
+    version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

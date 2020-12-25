@@ -1,6 +1,13 @@
 package com.github.pksokolowski.coroutinesfun.utils
 
-class CyclicIterator<T>(private val data: Collection<T>) : Iterator<T> {
+import kotlin.math.min
+
+interface CyclicIterator<T> {
+    fun hasNext(): Boolean
+    fun next(): T
+}
+
+class MutableCyclicIterator<T>(private var data: Collection<T>) : Iterator<T>, CyclicIterator<T> {
     private var currentIndex = 0
 
     override fun hasNext() = data.isNotEmpty()
@@ -11,6 +18,13 @@ class CyclicIterator<T>(private val data: Collection<T>) : Iterator<T> {
             currentIndex = (currentIndex + 1).rem(data.size)
         }
     }
+
+    fun replaceData(newData: Collection<T>) {
+        data = newData
+        currentIndex = min(currentIndex, data.size - 1)
+    }
 }
 
-fun <T> Collection<T>.toCyclicIterator() = CyclicIterator(this)
+fun <T> Collection<T>.toCyclicIterator(): CyclicIterator<T> = MutableCyclicIterator(this)
+
+fun <T> Collection<T>.toMutableCyclicIterator() = MutableCyclicIterator(this)
