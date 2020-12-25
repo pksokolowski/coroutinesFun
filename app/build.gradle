@@ -17,6 +17,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas".toString())
+            }
+        }
     }
 
     buildTypes {
@@ -57,6 +63,10 @@ dependencies {
 
     implementation deps.navigation.fragment_ktx
     implementation deps.navigation.ui_ktx
+
+    implementation deps.room.runtime
+    implementation deps.room.ktx
+    kapt deps.room.compiler
 
     testImplementation deps.junit
     androidTestImplementation deps.espresso.core

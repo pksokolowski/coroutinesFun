@@ -22,7 +22,7 @@ versions.mockwebserver = "3.8.1"
 versions.navigation = "2.3.2"
 versions.recyclerview = "1.0.0"
 versions.retrofit = "2.9.0"
-versions.room = "2.3.0-alpha01"
+versions.room = "2.2.6"
 versions.timber = "4.7.1"
 
 ext.versions = versions
