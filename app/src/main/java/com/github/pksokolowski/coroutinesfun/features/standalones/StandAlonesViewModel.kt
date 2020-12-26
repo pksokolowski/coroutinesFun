@@ -101,4 +101,39 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 output("\n you can see new elements were inserted in-between the items")
             }
     }
+
+    fun bufferSample(bufferOn: Boolean) {
+        output("buffer accumulates prior values while operators down the chain are free to operate on the older items\n")
+        val quickWork = flow {
+            for (i in 1..10) {
+                delay(200)
+                emit(i)
+            }
+        }
+
+        suspend fun timeConsumingMultiplication(number: Int): Int {
+            delay(300)
+            return number * 2
+        }
+
+        val startTime = System.currentTimeMillis()
+        fun showDuration() =
+            (System.currentTimeMillis() - startTime).let { output("\ntook : $it ms") }
+
+        if (bufferOn) {
+            quickWork
+                .buffer()
+                .map { timeConsumingMultiplication(it) }
+                .onEach { output("received item: $it") }
+                .launchIn(viewModelScope)
+                .invokeOnCompletion { showDuration() }
+        } else {
+            quickWork
+                //.buffer()
+                .map { timeConsumingMultiplication(it) }
+                .onEach { output("received item: $it") }
+                .launchIn(viewModelScope)
+                .invokeOnCompletion { showDuration() }
+        }
+    }
 }
