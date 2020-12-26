@@ -70,7 +70,8 @@ class StandAlonesFragment : Fragment() {
         "" to ::displayAllKnownCommands,
         "simple1" to { viewModel.runSomeFunCoroutines() },
         "fakenet" to { viewModel.runHandleExceptions(false) },
-        "fakenet-exception" to { viewModel.runHandleExceptions((true)) }
+        "fakenet-exception" to { viewModel.runHandleExceptions((true)) },
+        "timeout" to { viewModel.withTimeoutSample() },
     )
 
     @SuppressLint("SetTextI18n")

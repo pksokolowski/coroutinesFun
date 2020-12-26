@@ -65,4 +65,19 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("Username = $userName")
         }
     }
+
+    fun withTimeoutSample() {
+        output("display subsequent numbers in 1..10 with 100ms delays\nand a 1000 ms timeout")
+        val numbersFlow = flow {
+            for (i in 1..10) {
+                delay(100)
+                emit(i)
+            }
+        }
+        viewModelScope.launch() {
+            withTimeout(600) {
+                numbersFlow.collect { output("got number $it") }
+            }
+        }
+    }
 }
