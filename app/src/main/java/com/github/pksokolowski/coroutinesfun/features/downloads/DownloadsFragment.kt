@@ -21,7 +21,7 @@ import java.io.FileNotFoundException
 import java.lang.Exception
 import java.net.URL
 
-class DownloadsFragment() : Fragment() {
+class DownloadsFragment : Fragment() {
     private var _binding: FragmentDownloadsBinding? = null
     private val binding get() = _binding!!
 

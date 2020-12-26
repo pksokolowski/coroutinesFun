@@ -52,7 +52,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
 
     fun runHandleExceptions(shouldFail: Boolean) {
         fun getUserNameById(id: Long): String {
-            if (shouldFail) throw IllegalStateException("ShouldFails was set to true!")
+            if (shouldFail) throw IllegalStateException("ShouldFail was set to true!")
             return "Stefan$id"
         }
 

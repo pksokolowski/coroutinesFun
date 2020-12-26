@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
 class FlowsViewModel @ViewModelInject constructor(
-    private val usersProvider: usersProvider
+    private val usersProvider: UsersProvider
 ) : ViewModel() {
     val currentUser = usersProvider.user.asLiveData()
 

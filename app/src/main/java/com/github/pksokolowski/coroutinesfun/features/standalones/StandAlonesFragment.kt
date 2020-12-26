@@ -73,8 +73,6 @@ class StandAlonesFragment : Fragment() {
         "fakenet-exception" to { viewModel.runHandleExceptions((true)) }
     )
 
-    fun displayString(@StringRes content: Int) = displayString(getString(content))
-
     @SuppressLint("SetTextI18n")
     private fun displayString(content: String) {
         binding.output.text = "${binding.output.text}\n$content"
