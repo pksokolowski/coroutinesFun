@@ -67,7 +67,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
     }
 
     fun withTimeoutSample() {
-        output("display subsequent numbers in 1..10 with 100ms delays\nand a 1000 ms timeout")
+        output("display subsequent numbers in 1..10 with 100ms delays\nand a 1000 ms timeout\n")
         val numbersFlow = flow {
             for (i in 1..10) {
                 delay(100)
@@ -79,5 +79,26 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 numbersFlow.collect { output("got number $it") }
             }
         }
+    }
+
+    fun transformSample() {
+        output("using transform operator on a flow of (1,2,3)\n")
+        val flow = listOf(1, 2, 3).asFlow()
+            .map {
+                delay(100)
+                it
+            }
+
+        flow
+            .flowOn(Dispatchers.Main)
+            .transform {
+                emit(it.toFloat() - 0.5)
+                emit(it)
+            }
+            .onEach { output(it.toString()) }
+            .launchIn(viewModelScope)
+            .invokeOnCompletion {
+                output("\n you can see new elements were inserted in-between the items")
+            }
     }
 }

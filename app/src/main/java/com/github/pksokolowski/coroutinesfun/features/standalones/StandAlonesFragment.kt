@@ -72,6 +72,7 @@ class StandAlonesFragment : Fragment() {
         "fakenet" to { viewModel.runHandleExceptions(false) },
         "fakenet-exception" to { viewModel.runHandleExceptions((true)) },
         "timeout" to { viewModel.withTimeoutSample() },
+        "transform" to { viewModel.transformSample() },
     )
 
     @SuppressLint("SetTextI18n")
