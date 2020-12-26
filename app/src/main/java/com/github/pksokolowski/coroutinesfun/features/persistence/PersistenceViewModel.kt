@@ -8,6 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.github.pksokolowski.coroutinesfun.model.Animal
 import com.github.pksokolowski.coroutinesfun.repository.AnimalsRepository
 import com.github.pksokolowski.coroutinesfun.utils.toMutableCyclicIterator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class PersistenceViewModel @ViewModelInject constructor(
@@ -20,14 +24,18 @@ class PersistenceViewModel @ViewModelInject constructor(
     private var knownAnimalsIds = listOf<Long>().toMutableCyclicIterator()
 
     init {
-        loadNext()
+        animalsRepository.getAllKnownAnimalsIdsFlow()
+            .flowOn(Dispatchers.IO)
+            .onEach {
+                val wasInitiallyEmpty = !knownAnimalsIds.hasNext()
+                knownAnimalsIds.replaceData(it)
+                if (wasInitiallyEmpty) loadNext()
+            }
+            .launchIn(viewModelScope)
     }
 
     fun loadNext() {
         viewModelScope.launch {
-            if (!knownAnimalsIds.hasNext()) {
-                loadKnownIds()
-            }
             if (knownAnimalsIds.hasNext()) {
                 knownAnimalsIds.next().let { id ->
                     _loadedAnimal.value = animalsRepository.getAnimalById(id)
@@ -36,16 +44,9 @@ class PersistenceViewModel @ViewModelInject constructor(
         }
     }
 
-    private suspend fun loadKnownIds() {
-        animalsRepository
-            .getAllKnownAnimalsIds()
-            .let { knownAnimalsIds.replaceData(it) }
-    }
-
     fun saveAnimal(animal: Animal) {
         viewModelScope.launch {
             animalsRepository.saveAnimal(animal)
-            loadKnownIds()
         }
     }
 }

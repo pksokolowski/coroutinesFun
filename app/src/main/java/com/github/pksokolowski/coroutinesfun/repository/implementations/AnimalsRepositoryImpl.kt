@@ -21,4 +21,5 @@ class AnimalsRepositoryImpl(
     }
 
     override suspend fun getAllKnownAnimalsIds() = animalsDao.getAllKnownAnimalsIds()
+    override fun getAllKnownAnimalsIdsFlow() = animalsDao.getAllKnownAnimalsIdsFlow()
 }

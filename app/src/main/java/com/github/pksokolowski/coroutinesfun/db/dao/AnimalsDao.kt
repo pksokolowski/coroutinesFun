@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.github.pksokolowski.coroutinesfun.db.dto.AnimalDto
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AnimalsDao {
@@ -12,6 +13,9 @@ interface AnimalsDao {
 
     @Query("SELECT id FROM animals ORDER BY id ASC")
     suspend fun getAllKnownAnimalsIds(): List<Long>
+
+    @Query("SELECT id FROM animals ORDER BY id ASC")
+    fun getAllKnownAnimalsIdsFlow(): Flow<List<Long>>
 
     @Insert
     suspend fun insertAnimal(animalDto: AnimalDto): Long
