@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -78,6 +77,8 @@ class StandAlonesFragment : Fragment() {
         "channel" to { viewModel.produceChannelSample() },
         "fan-out" to { viewModel.fanOutSample(10) },
         "fan-out-2" to { viewModel.fanOutSample(2) },
+        "shared-res" to { viewModel.sharedResourceAccessSample(false) },
+        "shared-res-mutex" to { viewModel.sharedResourceAccessSample(true) },
     )
 
     @SuppressLint("SetTextI18n")

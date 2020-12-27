@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.lang.IllegalStateException
+import java.util.concurrent.atomic.AtomicIntegerArray
 
 class StandAlonesViewModel @ViewModelInject constructor(
 
@@ -184,7 +187,36 @@ class StandAlonesViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             val channel = produceNumbers()
             repeat(workersCount) { launchProcessor(channel) }
-
         }
     }
+
+    fun sharedResourceAccessSample(useMutex: Boolean) {
+        output("accessing shared state from many coroutines. Use mutex = $useMutex")
+
+        val mutex = Mutex()
+        // for similar trivial cases, in real-life consider an atomic collection instead of a mutex
+        var sharedList = mutableListOf<Int>()
+
+        val iterations = 1000
+        val itemsPerIteration = 10
+
+        val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("Exception handled: $throwable")
+        }
+
+        viewModelScope.launch(Dispatchers.Default + handler) {
+            (1..iterations).map {
+                async {
+                    if (useMutex) {
+                        repeat(itemsPerIteration) { mutex.withLock { sharedList.add(it) } }
+                    } else {
+                        repeat(itemsPerIteration) { sharedList.add(it) }
+                    }
+                }
+            }.awaitAll()
+
+            output("${sharedList.size} out of ${iterations * itemsPerIteration} arrived")
+        }
+    }
+
 }
