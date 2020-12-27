@@ -154,4 +154,37 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 }
         }
     }
+
+    /**
+     * Notice that the generation of tasks to handle takes approx. 20ms each, and processing
+     * each task takes 200 ms, therefore the optimal workers count appears to be 10 for this case,
+     * because 200 / 20 = 10.
+     */
+    fun fanOutSample(workersCount: Int) {
+        output("distribute work evenly across multiple coroutines, num of workers: $workersCount")
+
+        val startTime = System.currentTimeMillis()
+
+        fun CoroutineScope.produceNumbers() = produce {
+            repeat(5) {
+                delay(20)
+                send(it)
+            }
+        }
+
+        fun CoroutineScope.launchProcessor(channel: ReceiveChannel<Int>) =
+            launch(Dispatchers.Default) {
+                channel.consumeEach { item ->
+                    delay(200)
+                    val timePassedSoFar = System.currentTimeMillis() - startTime
+                    output("processed item: $item; ($timePassedSoFar ms passed since start.)")
+                }
+            }
+
+        viewModelScope.launch {
+            val channel = produceNumbers()
+            repeat(workersCount) { launchProcessor(channel) }
+
+        }
+    }
 }
