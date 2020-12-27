@@ -75,6 +75,7 @@ class StandAlonesFragment : Fragment() {
         "transform" to { viewModel.transformSample() },
         "buffer" to { viewModel.bufferSample(true) },
         "buffer-off" to { viewModel.bufferSample(false) },
+        "channel" to { viewModel.produceChannelSample() },
     )
 
     @SuppressLint("SetTextI18n")

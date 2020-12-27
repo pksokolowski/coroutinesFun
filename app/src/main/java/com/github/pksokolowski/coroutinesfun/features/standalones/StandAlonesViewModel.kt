@@ -5,6 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.channels.*
 import java.lang.IllegalStateException
 
 class StandAlonesViewModel @ViewModelInject constructor(
@@ -134,6 +135,23 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 .onEach { output("received item: $it") }
                 .launchIn(viewModelScope)
                 .invokeOnCompletion { showDuration() }
+        }
+    }
+
+    fun produceChannelSample() {
+        output("create a channel and receive items from it.")
+
+        fun CoroutineScope.produceNumbers() = produce<Int> {
+            repeat(5) {
+                send(it)
+            }
+        }
+
+        viewModelScope.launch {
+            produceNumbers()
+                .consumeEach {
+                    output("Consumed from channel: $it")
+                }
         }
     }
 }
