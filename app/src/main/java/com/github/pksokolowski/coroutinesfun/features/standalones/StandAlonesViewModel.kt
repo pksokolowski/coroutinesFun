@@ -9,7 +9,6 @@ import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.lang.IllegalStateException
-import java.util.concurrent.atomic.AtomicIntegerArray
 
 class StandAlonesViewModel @ViewModelInject constructor(
 
@@ -219,4 +218,26 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
+    fun combineLatestSample() {
+        output("combines latest emissions from two flows")
+
+        val flowA = listOf(true, false, false, false, true).emit(300)
+        val flowB = listOf(false, true).emit(200)
+
+        combine(flowA, flowB) { a, b ->
+            a && b
+        }
+            .flowOn(Dispatchers.Default)
+            .onEach { bothTrue ->
+                output(if (bothTrue) "both are true!" else "at least one is false")
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun <T> List<T>.emit(delay: Long): Flow<T> = flow {
+        forEach {
+            delay(delay)
+            emit(it)
+        }
+    }
 }

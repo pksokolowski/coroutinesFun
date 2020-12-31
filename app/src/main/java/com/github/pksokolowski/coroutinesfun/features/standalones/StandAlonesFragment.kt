@@ -79,6 +79,7 @@ class StandAlonesFragment : Fragment() {
         "fan-out-2" to { viewModel.fanOutSample(2) },
         "shared-res" to { viewModel.sharedResourceAccessSample(false) },
         "shared-res-mutex" to { viewModel.sharedResourceAccessSample(true) },
+        "combine" to { viewModel.combineLatestSample() },
     )
 
     @SuppressLint("SetTextI18n")
