@@ -80,6 +80,9 @@ class StandAlonesFragment : Fragment() {
         "shared-res" to { viewModel.sharedResourceAccessSample(false) },
         "shared-res-mutex" to { viewModel.sharedResourceAccessSample(true) },
         "combine" to { viewModel.combineLatestSample() },
+        "default" to { viewModel.handleErrorWithDefaultSample() },
+        "fallback" to { viewModel.handleErrorOnErrorSwitchToAlternativeSolution(1) },
+        "retry" to { viewModel.handleErrorsRetry() }
     )
 
     @SuppressLint("SetTextI18n")

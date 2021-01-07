@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.lang.IllegalStateException
+import kotlin.random.Random
 
 class StandAlonesViewModel @ViewModelInject constructor(
 
@@ -231,6 +232,63 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .onEach { bothTrue ->
                 output(if (bothTrue) "both are true!" else "at least one is false")
             }
+            .launchIn(viewModelScope)
+    }
+
+    fun handleErrorWithDefaultSample() {
+        output("trying an operation which fails, then uses a default value instead for a second operation in chain\n")
+        listOf(2).asFlow()
+            .map { it / 0 }
+            .catch {
+                output("first operation failed, using default value instead")
+                emit(1)
+            }
+            .map { it * 2 }
+            .onEach { output("result is $it") }
+            .launchIn(viewModelScope)
+    }
+
+    fun handleErrorOnErrorSwitchToAlternativeSolution(input: Int) {
+        suspend fun fastProbabilisticAlgorithm(number: Int): Int {
+            delay(100)
+            if (Random.nextBoolean()) throw ArithmeticException("Failed to perform the operation")
+            return number * 2
+        }
+
+        suspend fun slowDeterministicAlgorithm(number: Int): Int {
+            delay(1000)
+            return number * 2
+        }
+
+        flow { emit(input) }
+            .map {
+                output("Trying a fast, probabilistic algorithm fist")
+                fastProbabilisticAlgorithm(it)
+            }
+            .catch {
+                output("Failure, falling back to slow, deterministic solution")
+                emit(slowDeterministicAlgorithm(input))
+            }
+            .onEach {
+                output("result is $it")
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun handleErrorsRetry() {
+        output("Tries an iffy connection, if it faile, retries a couple of times\n")
+
+        suspend fun downloadResourceOverIffyConnection(): String {
+            delay(100)
+            if (Random.nextBoolean()) throw ArithmeticException("Failed to perform the operation")
+            return "<some successfully retrieved content>"
+        }
+
+        flow { emit(Unit) }
+            .map { downloadResourceOverIffyConnection() }
+            .retry(4)
+            .catch { output("tried 5 times, but failed anyway") }
+            .onEach { output("Got: $it") }
             .launchIn(viewModelScope)
     }
 
