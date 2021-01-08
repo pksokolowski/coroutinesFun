@@ -6,6 +6,7 @@ import com.github.pksokolowski.coroutinesfun.features.downloads.DownloadsFragmen
 import com.github.pksokolowski.coroutinesfun.features.flows.FlowsFragment
 import com.github.pksokolowski.coroutinesfun.features.standalones.StandAlonesFragment
 import com.github.pksokolowski.coroutinesfun.features.start.StartScreenFragment
+import com.github.pksokolowski.coroutinesfun.features.work.WorkFragment
 import javax.inject.Inject
 
 class MainFragmentFactory @Inject constructor(
@@ -17,6 +18,7 @@ class MainFragmentFactory @Inject constructor(
             FlowsFragment::class.java.name -> FlowsFragment()
             DownloadsFragment::class.java.name -> DownloadsFragment()
             StandAlonesFragment::class.java.name -> StandAlonesFragment()
+            WorkFragment::class.java.name -> WorkFragment()
 
             else -> super.instantiate(classLoader, className)
         }

@@ -52,6 +52,7 @@ dependencies {
     implementation deps.constraint_layout
 
     implementation deps.dagger_hilt.lifecycle_viewmodel
+    implementation deps.dagger_hilt.lifecycle_work
     implementation deps.dagger_hilt.runtime
     kapt deps.dagger_hilt.compiler
     kapt deps.dagger_hilt.androidx_compiler
@@ -67,6 +68,8 @@ dependencies {
     implementation deps.room.runtime
     implementation deps.room.ktx
     kapt deps.room.compiler
+
+    implementation deps.work.work_manager_ktx
 
     testImplementation deps.junit
     androidTestImplementation deps.espresso.core

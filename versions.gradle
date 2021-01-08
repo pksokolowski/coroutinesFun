@@ -24,6 +24,7 @@ versions.recyclerview = "1.0.0"
 versions.retrofit = "2.9.0"
 versions.room = "2.2.6"
 versions.timber = "4.7.1"
+versions.work = "2.4.0"
 
 ext.versions = versions
 
@@ -67,6 +68,7 @@ deps.core_ktx = "androidx.core:core-ktx:$versions.core_ktx"
 
 def dagger_hilt = [:]
 dagger_hilt.lifecycle_viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$versions.dagger_hilt_lifecycle"
+dagger_hilt.lifecycle_work = "androidx.hilt:hilt-work:$versions.dagger_hilt_lifecycle"
 dagger_hilt.runtime = "com.google.dagger:hilt-android:$versions.dagger_hilt"
 dagger_hilt.compiler = "com.google.dagger:hilt-android-compiler:$versions.dagger_hilt"
 dagger_hilt.androidx_compiler = "androidx.hilt:hilt-compiler:$versions.dagger_hilt_lifecycle"
@@ -128,6 +130,11 @@ deps.navigation = navigation
 deps.okhttp_logging_interceptor = "com.squareup.okhttp3:logging-interceptor:${versions.okhttp_logging_interceptor}"
 
 deps.recyclerview = "androidx.recyclerview:recyclerview:$versions.recyclerview"
+
+def work = [:]
+work.work_manager_ktx = "androidx.work:work-runtime-ktx:$versions.work"
+work.anrdoid_test_implementation = "androidx.work:work-testing:$versions.work"
+deps.work = work
 
 def room = [:]
 room.runtime = "androidx.room:room-runtime:$versions.room"

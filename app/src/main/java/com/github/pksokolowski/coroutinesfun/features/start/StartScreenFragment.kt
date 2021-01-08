@@ -48,5 +48,9 @@ class StartScreenFragment(
         binding.persistenceButton.setOnClickListener {
             findNavController().navigate(R.id.action_startScreenFragment_to_persistenceFragment)
         }
+
+        binding.coroutineWorkerButton.setOnClickListener {
+            findNavController().navigate(R.id.action_startScreenFragment_to_workFragment)
+        }
     }
 }
