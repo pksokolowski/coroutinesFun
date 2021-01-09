@@ -12,7 +12,7 @@ interface PrimeCandidateDao {
     @Query("SELECT * FROM prime_candidates ORDER BY id ASC")
     fun getAllPrimeCandidates(): Flow<List<PrimeCandidateDto>>
 
-    @Query("SELECT * FROM prime_candidates WHERE is_prime = null ORDER BY id ASC")
+    @Query("SELECT * FROM prime_candidates WHERE is_prime IS NULL ORDER BY id ASC")
     suspend fun getAllUnhandledCandidates(): List<PrimeCandidateDto>
 
     @Insert
