@@ -16,7 +16,7 @@ class SampleCoroutineWorker @WorkerInject constructor(
     override suspend fun doWork(): Result {
         primeCandidatesRepository.getUnhandledCandidates()
             .forEach { candidate ->
-                val isPrime = candidate.number.isProbablePrime(100)
+                val isPrime = candidate.number.isProbablePrime(1_000_000)
                 val newValue = PrimeCandidate(candidate.id, candidate.number, isPrime)
                 primeCandidatesRepository.updateCandidate(newValue)
             }

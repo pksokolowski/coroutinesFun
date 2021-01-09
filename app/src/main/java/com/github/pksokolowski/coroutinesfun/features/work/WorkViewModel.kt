@@ -5,9 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
+import androidx.work.*
 import com.github.pksokolowski.coroutinesfun.repository.PrimeCandidatesRepository
 import kotlinx.coroutines.launch
 import java.math.BigInteger
@@ -24,12 +22,21 @@ class WorkViewModel @ViewModelInject constructor(
     }
 
     private fun initiateWork() {
-        val workRequest: WorkRequest =
+        val constraints = Constraints.Builder()
+            .setRequiresDeviceIdle(true)
+            .build()
+
+        val workRequest: OneTimeWorkRequest =
             OneTimeWorkRequestBuilder<SampleCoroutineWorker>()
+                .setConstraints(constraints)
                 .build()
 
         WorkManager
             .getInstance(application)
-            .enqueue(workRequest)
+            .enqueueUniqueWork(PRIMALITY_TESTS_WORK, ExistingWorkPolicy.REPLACE, workRequest)
+    }
+
+    private companion object {
+        const val PRIMALITY_TESTS_WORK = "primality tests"
     }
 }
