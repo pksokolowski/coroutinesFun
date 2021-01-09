@@ -44,7 +44,6 @@ class StandAlonesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.input.textChanges()
-            .distinctUntilChanged()
             .filterNotNull()
             .debounce(300)
             .map { it.toString() }
