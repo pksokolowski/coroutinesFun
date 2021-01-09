@@ -1,5 +1,6 @@
 package com.github.pksokolowski.coroutinesfun.utils
 
+import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.CheckResult
 import androidx.core.widget.doOnTextChanged
@@ -16,5 +17,16 @@ fun EditText.textChanges(): Flow<CharSequence?> {
             offer(text)
         }
         awaitClose { removeTextChangedListener(watcher) }
+    }
+}
+
+@ExperimentalCoroutinesApi
+@CheckResult
+fun Button.clicks(): Flow<Unit> {
+    return callbackFlow {
+        setOnClickListener { _ ->
+            offer(Unit)
+        }
+        awaitClose { setOnClickListener(null) }
     }
 }

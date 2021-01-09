@@ -26,4 +26,11 @@
     <string name="persistence_label_create_new_animal">Create new animal</string>
     <string name="persistence_error_required_field">Required field</string>
 
+    <string name="work_header">Prime number candidates</string>
+    <string name="work_button_check_candidate">Check</string>
+    <string name="work_prime_status_unknown">\?</string>
+    <string name="work_prime_status_prime">PRIME</string>
+    <string name="work_prime_status_composite">COMPOSITE</string>
+    <string name="work_error_input_parsing_failed">Unhandled input</string>
+
 </resources>

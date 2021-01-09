@@ -4,8 +4,11 @@ import android.app.Application
 import androidx.room.Room
 import com.github.pksokolowski.coroutinesfun.db.AppDatabase
 import com.github.pksokolowski.coroutinesfun.db.dao.AnimalsDao
+import com.github.pksokolowski.coroutinesfun.db.dao.PrimeCandidateDao
 import com.github.pksokolowski.coroutinesfun.repository.AnimalsRepository
+import com.github.pksokolowski.coroutinesfun.repository.PrimeCandidatesRepository
 import com.github.pksokolowski.coroutinesfun.repository.implementations.AnimalsRepositoryImpl
+import com.github.pksokolowski.coroutinesfun.repository.implementations.PrimeCandidatesRepositoryImpl
 import com.github.pksokolowski.coroutinesfun.utils.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -38,9 +41,19 @@ object AppModule {
         return db.animalsDao()
     }
 
+    @Singleton
+    @Provides
+    fun providesPrimeCandidatesDao(db: AppDatabase): PrimeCandidateDao {
+        return db.primeCandidatesDao()
+    }
+
     @Provides
     fun providesAnimalsRepository(animalsDao: AnimalsDao): AnimalsRepository {
         return AnimalsRepositoryImpl(animalsDao)
     }
 
+    @Provides
+    fun providesPrimeCandidatesRepository(primeCandidateDao: PrimeCandidateDao): PrimeCandidatesRepository {
+        return PrimeCandidatesRepositoryImpl(primeCandidateDao)
+    }
 }

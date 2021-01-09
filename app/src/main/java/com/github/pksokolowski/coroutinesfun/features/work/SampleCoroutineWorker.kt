@@ -5,15 +5,22 @@ import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.github.pksokolowski.coroutinesfun.db.dao.AnimalsDao
+import com.github.pksokolowski.coroutinesfun.model.PrimeCandidate
+import com.github.pksokolowski.coroutinesfun.repository.PrimeCandidatesRepository
 
 class SampleCoroutineWorker @WorkerInject constructor(
     @Assisted application: Context,
     @Assisted params: WorkerParameters,
-    animalsDao: AnimalsDao,
+    private val primeCandidatesRepository: PrimeCandidatesRepository,
 ) : CoroutineWorker(application, params) {
     override suspend fun doWork(): Result {
-        TODO("Not yet implemented")
+        primeCandidatesRepository.getUnhandledCandidates()
+            .forEach { candidate ->
+                val isPrime = candidate.number.isProbablePrime(100)
+                val newValue = PrimeCandidate(candidate.id, candidate.number, isPrime)
+                primeCandidatesRepository.updateCandidate(newValue)
+            }
+        return Result.success()
     }
 
 }
