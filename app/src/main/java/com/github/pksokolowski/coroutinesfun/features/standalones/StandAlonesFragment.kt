@@ -81,7 +81,8 @@ class StandAlonesFragment : Fragment() {
         "combine" to { viewModel.combineLatestSample() },
         "default" to { viewModel.handleErrorWithDefaultSample() },
         "fallback" to { viewModel.handleErrorOnErrorSwitchToAlternativeSolution(1) },
-        "retry" to { viewModel.handleErrorsRetry() }
+        "retry" to { viewModel.handleErrorsRetry() },
+        "cancellation" to { viewModel.handleCancellation() },
     )
 
     @SuppressLint("SetTextI18n")

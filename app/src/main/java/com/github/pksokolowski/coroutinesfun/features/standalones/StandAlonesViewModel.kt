@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.lang.IllegalStateException
+import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 class StandAlonesViewModel @ViewModelInject constructor(
@@ -67,6 +68,51 @@ class StandAlonesViewModel @ViewModelInject constructor(
         viewModelScope.launch(Dispatchers.IO + handler) {
             val userName = getUserNameById(1500)
             output("Username = $userName")
+        }
+    }
+
+    fun handleCancellation() {
+        output(
+            """
+            start a long running operation and cancel it mid-way
+            After the work is done <some important cleanup> is required to be run, think re-enabling 
+            some button etc.
+            
+        """.trimIndent()
+        )
+
+        fun someImportantAction() {
+            output("<some important cleanup>")
+        }
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        suspend fun doWork() = withContext(Dispatchers.Default) {
+            repeat(6) {
+                // cooperative cancellation, note that isActive check can be done manually for more flexibility
+                ensureActive()
+
+                output("still running work...")
+                Thread.sleep(1000)
+            }
+        }
+
+        coroutineScope.launch() {
+            try {
+                doWork()
+                output("work finished!")
+            } catch (e: CancellationException) {
+                output("cancellation exception caught!")
+            } finally {
+                someImportantAction()
+            }
+        }
+
+        GlobalScope.launch {
+            delay(2000)
+            output("Cancelling the coroutine.")
+            coroutineScope.cancel()
         }
     }
 
