@@ -1,15 +1,16 @@
 package com.github.pksokolowski.coroutinesfun.features.standalones
 
-import androidx.lifecycle.ViewModel
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.lang.IllegalStateException
-import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 class StandAlonesViewModel @ViewModelInject constructor(
@@ -336,6 +337,26 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .catch { output("tried 5 times, but failed anyway") }
             .onEach { output("Got: $it") }
             .launchIn(viewModelScope)
+    }
+
+    fun backPressure() {
+        val source = Channel<Int>(3)
+
+        viewModelScope.launch {
+            for (i in 1..10) {
+                delay(100)
+                source.send(i)
+                output("produced: $i")
+            }
+        }
+
+        viewModelScope.launch {
+            source
+                .consumeEach {
+                    delay(1000)
+                    output("handled: $it")
+                }
+        }
     }
 
     fun <T> List<T>.emit(delay: Long): Flow<T> = flow {
