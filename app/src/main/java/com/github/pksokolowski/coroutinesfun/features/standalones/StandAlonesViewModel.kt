@@ -382,6 +382,31 @@ class StandAlonesViewModel @ViewModelInject constructor(
 
     }
 
+    private inline fun <T, R> Flow<T>.customOperatorRun(crossinline transform: suspend T.() -> R): Flow<R> =
+        transform { value -> return@transform emit(value.transform()) }
+
+    fun customOperatorSimple() {
+        (1..10).asFlow()
+            .customOperatorRun { toString() }
+            .onEach {
+                output(it)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun customOperatorDoubleClick() {
+        output("emiting 'click' events faster and faster\n")
+        (10 downTo 0).asFlow()
+            .onEach {
+                output("click!")
+                delay(it * 100L)
+            }
+            .filterDoubleTap(300)
+            .onEach { output("Actuated!") }
+            .launchIn(viewModelScope)
+    }
+
+
     fun <T> List<T>.emit(delay: Long): Flow<T> = flow {
         forEach {
             delay(delay)

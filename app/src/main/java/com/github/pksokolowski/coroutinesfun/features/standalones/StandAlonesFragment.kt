@@ -85,6 +85,8 @@ class StandAlonesFragment : Fragment() {
         "cancellation" to { viewModel.handleCancellation() },
         "backpressure" to { viewModel.backPressure() },
         "conflate" to { viewModel.conflateSample() },
+        "custom1" to { viewModel.customOperatorSimple() },
+        "doubletap" to { viewModel.customOperatorDoubleClick() },
     )
 
     @SuppressLint("SetTextI18n")
