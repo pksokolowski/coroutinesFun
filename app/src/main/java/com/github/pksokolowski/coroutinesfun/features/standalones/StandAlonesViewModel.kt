@@ -359,6 +359,29 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
+    fun conflateSample() {
+        output(
+            """
+            with a fast emitting source, when stream is intended to just show the latest 
+            result in the UI, conflate() operator comes in handy.
+            
+        """.trimIndent()
+        )
+
+        (1..100).asFlow()
+            .map {
+                delay(10)
+                it
+            }
+            .conflate()
+            .onEach {
+                delay(1000)
+                output("Displaying $it")
+            }
+            .launchIn(viewModelScope)
+
+    }
+
     fun <T> List<T>.emit(delay: Long): Flow<T> = flow {
         forEach {
             delay(delay)

@@ -83,7 +83,8 @@ class StandAlonesFragment : Fragment() {
         "fallback" to { viewModel.handleErrorOnErrorSwitchToAlternativeSolution(1) },
         "retry" to { viewModel.handleErrorsRetry() },
         "cancellation" to { viewModel.handleCancellation() },
-        "backpressure" to { viewModel.backPressure() }
+        "backpressure" to { viewModel.backPressure() },
+        "conflate" to { viewModel.conflateSample() },
     )
 
     @SuppressLint("SetTextI18n")
