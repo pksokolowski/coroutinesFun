@@ -20,10 +20,41 @@ class StandAlonesViewModel @ViewModelInject constructor(
     private val _output = MutableSharedFlow<String>()
     val output: SharedFlow<String> = _output
 
+    private var scopeOnDefault = getNewComputationScope()
+    private var otherScopeOnDefault = getNewComputationScope()
+    private var scopeOnMain = getNewScopeOnMainDispatcher()
+    private var scopeOnMainImmediate = getNewImmediateScope()
+    private var otherScopeOnMain: CoroutineScope = getNewScopeOnMainDispatcher()
+
     private fun output(content: String) {
         viewModelScope.launch {
             _output.emit(content)
         }
+    }
+
+    fun resetUtilityScopes() {
+        scopeOnDefault.cancel()
+        otherScopeOnDefault.cancel()
+        scopeOnMain.cancel()
+        scopeOnMainImmediate.cancel()
+        otherScopeOnMain.cancel()
+
+        scopeOnDefault = getNewComputationScope()
+        otherScopeOnDefault = getNewComputationScope()
+        scopeOnMain = getNewScopeOnMainDispatcher()
+        scopeOnMainImmediate = getNewImmediateScope()
+        otherScopeOnMain = getNewScopeOnMainDispatcher()
+    }
+
+    private fun getNewComputationScope() = CoroutineScope(Dispatchers.Default)
+    private fun getNewScopeOnMainDispatcher() = CoroutineScope(Dispatchers.Main)
+    private fun getNewImmediateScope() = CoroutineScope(Dispatchers.Main.immediate)
+
+    override fun onCleared() {
+        super.onCleared()
+        // cancelling the utility scope, this is for the samples to have a "different" scope when
+        // needed to try interactions, communication or backpressure management differences if any.
+        otherScopeOnMain.cancel()
     }
 
     fun runSomeFunCoroutines() {
@@ -415,6 +446,63 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 2)
             .onEach {
                 output("Consuming $it deliberately...")
+                delay(1000)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun sharedFlowFromAnotherCoroutineScope(useSameCoroutineInstead: Boolean = false) {
+        output("shared flow from one scope observer by slow subscriber on another...\n")
+        if (useSameCoroutineInstead) output("--- using the same scope for comparison ---\n")
+        val scopeToEmitFrom =
+            if (useSameCoroutineInstead) scopeOnDefault else otherScopeOnDefault
+        (1..10).asFlow()
+            .onEach {
+                output("Produced $it in hurry!")
+            }
+            .shareIn(scopeToEmitFrom, SharingStarted.Lazily)
+            .onEach {
+                output("Consuming $it deliberately...")
+                delay(1000)
+            }
+            .launchIn(scopeOnDefault)
+    }
+
+    fun sharedFlowFromAnotherCoroutineScopeWithoutReplay(useSameCoroutineInstead: Boolean = false) {
+        output("shared flow from one scope observer by slow subscriber on another, with no replay buffer.\n")
+        if (useSameCoroutineInstead) output("--- using the same scope for comparison ---\n")
+        val scopeToEmitFrom =
+            if (useSameCoroutineInstead) scopeOnDefault else otherScopeOnDefault
+        (1..10).asFlow()
+            .onEach {
+                output("Produced $it in hurry!")
+            }
+            .shareIn(scopeToEmitFrom, SharingStarted.Lazily, replay = 0)
+            .onEach {
+                output("Consuming $it deliberately...")
+                delay(1000)
+            }
+            .launchIn(scopeOnDefault)
+    }
+
+    fun secondSubscriberOfSharedFlow() {
+        output("two subscribers are observing one fast sharedFlow all in one scope\n")
+        val sharedOne = (1..10).asFlow()
+            .onEach {
+                output("Produced $it in hurry!")
+            }
+            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 2)
+
+        sharedOne
+            .onEach {
+                output("First consumer got $it")
+                delay(1000)
+            }
+            .launchIn(viewModelScope)
+
+        sharedOne
+            .onEach {
+                output("Second consumer got $it")
                 delay(1000)
             }
             .launchIn(viewModelScope)
