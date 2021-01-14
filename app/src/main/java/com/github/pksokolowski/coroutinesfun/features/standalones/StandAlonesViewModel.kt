@@ -406,6 +406,19 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
     }
 
+    fun lateToSharedFlow() {
+        output("An eagerly started SharedFlow is subscribed to after emissions are over, replay = 2\n")
+        (1..10).asFlow()
+            .onEach {
+                output("Produced $it in hurry!")
+            }
+            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 2)
+            .onEach {
+                output("Consuming $it deliberately...")
+                delay(1000)
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun <T> List<T>.emit(delay: Long): Flow<T> = flow {
         forEach {

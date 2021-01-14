@@ -87,6 +87,7 @@ class StandAlonesFragment : Fragment() {
         "conflate" to { viewModel.conflateSample() },
         "custom1" to { viewModel.customOperatorSimple() },
         "doubletap" to { viewModel.customOperatorDoubleClick() },
+        "shared-late" to { viewModel.lateToSharedFlow() },
     )
 
     @SuppressLint("SetTextI18n")
