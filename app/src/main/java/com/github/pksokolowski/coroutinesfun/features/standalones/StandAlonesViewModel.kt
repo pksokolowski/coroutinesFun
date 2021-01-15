@@ -20,11 +20,8 @@ class StandAlonesViewModel @ViewModelInject constructor(
     private val _output = MutableSharedFlow<String>()
     val output: SharedFlow<String> = _output
 
-    private var scopeOnDefault = getNewComputationScope()
-    private var otherScopeOnDefault = getNewComputationScope()
-    private var scopeOnMain = getNewScopeOnMainDispatcher()
-    private var scopeOnMainImmediate = getNewImmediateScope()
-    private var otherScopeOnMain: CoroutineScope = getNewScopeOnMainDispatcher()
+    private var samplesScope = getNewImmediateScope()
+    private var computationScope = getNewComputationScope()
 
     private fun output(content: String) {
         viewModelScope.launch {
@@ -33,17 +30,11 @@ class StandAlonesViewModel @ViewModelInject constructor(
     }
 
     fun resetUtilityScopes() {
-        scopeOnDefault.cancel()
-        otherScopeOnDefault.cancel()
-        scopeOnMain.cancel()
-        scopeOnMainImmediate.cancel()
-        otherScopeOnMain.cancel()
+        samplesScope.cancel()
+        computationScope.cancel()
 
-        scopeOnDefault = getNewComputationScope()
-        otherScopeOnDefault = getNewComputationScope()
-        scopeOnMain = getNewScopeOnMainDispatcher()
-        scopeOnMainImmediate = getNewImmediateScope()
-        otherScopeOnMain = getNewScopeOnMainDispatcher()
+        samplesScope = getNewScopeOnMainDispatcher()
+        computationScope = getNewComputationScope()
     }
 
     private fun getNewComputationScope() = CoroutineScope(Dispatchers.Default)
@@ -52,9 +43,10 @@ class StandAlonesViewModel @ViewModelInject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        // cancelling the utility scope, this is for the samples to have a "different" scope when
+        // cancelling the utility scopes, this is for the samples to have a "different" scope when
         // needed to try interactions, communication or backpressure management differences if any.
-        otherScopeOnMain.cancel()
+        samplesScope.cancel()
+        computationScope.cancel()
     }
 
     fun runSomeFunCoroutines() {
@@ -455,7 +447,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
         output("shared flow from one scope observer by slow subscriber on another...\n")
         if (useSameCoroutineInstead) output("--- using the same scope for comparison ---\n")
         val scopeToEmitFrom =
-            if (useSameCoroutineInstead) scopeOnDefault else otherScopeOnDefault
+            if (useSameCoroutineInstead) samplesScope else computationScope
         (1..10).asFlow()
             .onEach {
                 output("Produced $it in hurry!")
@@ -465,24 +457,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 output("Consuming $it deliberately...")
                 delay(1000)
             }
-            .launchIn(scopeOnDefault)
-    }
-
-    fun sharedFlowFromAnotherCoroutineScopeWithoutReplay(useSameCoroutineInstead: Boolean = false) {
-        output("shared flow from one scope observer by slow subscriber on another, with no replay buffer.\n")
-        if (useSameCoroutineInstead) output("--- using the same scope for comparison ---\n")
-        val scopeToEmitFrom =
-            if (useSameCoroutineInstead) scopeOnDefault else otherScopeOnDefault
-        (1..10).asFlow()
-            .onEach {
-                output("Produced $it in hurry!")
-            }
-            .shareIn(scopeToEmitFrom, SharingStarted.Lazily, replay = 0)
-            .onEach {
-                output("Consuming $it deliberately...")
-                delay(1000)
-            }
-            .launchIn(scopeOnDefault)
+            .launchIn(samplesScope)
     }
 
     fun secondSubscriberOfSharedFlow() {

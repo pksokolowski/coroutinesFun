@@ -90,8 +90,6 @@ class StandAlonesFragment : Fragment() {
         "shared-late" to { viewModel.lateToSharedFlow() },
         "shared-across" to { viewModel.sharedFlowFromAnotherCoroutineScope() },
         "shared-same" to { viewModel.sharedFlowFromAnotherCoroutineScope(true) },
-        "shared-across-0" to { viewModel.sharedFlowFromAnotherCoroutineScopeWithoutReplay() },
-        "shared-same-0" to { viewModel.sharedFlowFromAnotherCoroutineScopeWithoutReplay(true) },
         "shared-2" to { viewModel.secondSubscriberOfSharedFlow() },
     )
 
