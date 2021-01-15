@@ -60,7 +60,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             return "Lorem ipsum dolor sit amet"
         }
 
-        viewModelScope.launch {
+        samplesScope.launch {
             val primeDeferred = async { findSmallestPrime() }
             val poemDeferred = async { writeAPoem() }
 
@@ -89,7 +89,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("Exception thrown during fake network request: ${throwable.localizedMessage}")
         }
 
-        viewModelScope.launch(Dispatchers.IO + handler) {
+        samplesScope.launch(Dispatchers.IO + handler) {
             val userName = getUserNameById(1500)
             output("Username = $userName")
         }
@@ -148,7 +148,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 emit(i)
             }
         }
-        viewModelScope.launch() {
+        samplesScope.launch() {
             withTimeout(600) {
                 numbersFlow.collect { output("got number $it") }
             }
@@ -170,7 +170,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 emit(it)
             }
             .onEach { output(it.toString()) }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
             .invokeOnCompletion {
                 output("\n you can see new elements were inserted in-between the items")
             }
@@ -199,14 +199,14 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 .buffer()
                 .map { timeConsumingMultiplication(it) }
                 .onEach { output("received item: $it") }
-                .launchIn(viewModelScope)
+                .launchIn(samplesScope)
                 .invokeOnCompletion { showDuration() }
         } else {
             quickWork
                 //.buffer()
                 .map { timeConsumingMultiplication(it) }
                 .onEach { output("received item: $it") }
-                .launchIn(viewModelScope)
+                .launchIn(samplesScope)
                 .invokeOnCompletion { showDuration() }
         }
     }
@@ -220,7 +220,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
 
-        viewModelScope.launch {
+        samplesScope.launch {
             produceNumbers()
                 .consumeEach {
                     output("Consumed from channel: $it")
@@ -254,7 +254,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 }
             }
 
-        viewModelScope.launch {
+        samplesScope.launch {
             val channel = produceNumbers()
             repeat(workersCount) { launchProcessor(channel) }
         }
@@ -274,7 +274,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("Exception handled: $throwable")
         }
 
-        viewModelScope.launch(Dispatchers.Default + handler) {
+        samplesScope.launch(Dispatchers.Default + handler) {
             (1..iterations).map {
                 async {
                     if (useMutex) {
@@ -302,7 +302,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .onEach { bothTrue ->
                 output(if (bothTrue) "both are true!" else "at least one is false")
             }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun handleErrorWithDefaultSample() {
@@ -315,7 +315,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
             .map { it * 2 }
             .onEach { output("result is $it") }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun handleErrorOnErrorSwitchToAlternativeSolution(input: Int) {
@@ -342,7 +342,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .onEach {
                 output("result is $it")
             }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun handleErrorsRetry() {
@@ -359,13 +359,13 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .retry(4)
             .catch { output("tried 5 times, but failed anyway") }
             .onEach { output("Got: $it") }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun backPressure() {
         val source = Channel<Int>(3)
 
-        viewModelScope.launch {
+        samplesScope.launch {
             for (i in 1..10) {
                 delay(100)
                 source.send(i)
@@ -373,7 +373,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
 
-        viewModelScope.launch {
+        samplesScope.launch {
             source
                 .consumeEach {
                     delay(1000)
@@ -401,7 +401,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 delay(1000)
                 output("Displaying $it")
             }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
 
     }
 
@@ -414,7 +414,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .onEach {
                 output(it)
             }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun customOperatorDoubleClick() {
@@ -426,7 +426,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
             .filterDoubleTap(300)
             .onEach { output("Actuated!") }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun lateToSharedFlow() {
@@ -440,7 +440,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 output("Consuming $it deliberately...")
                 delay(1000)
             }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun sharedFlowFromAnotherCoroutineScope(useSameCoroutineInstead: Boolean = false) {
@@ -466,21 +466,21 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .onEach {
                 output("Produced $it in hurry!")
             }
-            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 2)
+            .shareIn(samplesScope, SharingStarted.Eagerly, replay = 2)
 
         sharedOne
             .onEach {
                 output("First consumer got $it")
                 delay(1000)
             }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
 
         sharedOne
             .onEach {
                 output("Second consumer got $it")
                 delay(1000)
             }
-            .launchIn(viewModelScope)
+            .launchIn(samplesScope)
     }
 
     fun <T> List<T>.emit(delay: Long): Flow<T> = flow {
