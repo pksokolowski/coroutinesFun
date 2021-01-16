@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.pksokolowski.coroutinesfun.R
 import com.github.pksokolowski.coroutinesfun.databinding.FragmentStandalonesBinding
-import com.github.pksokolowski.coroutinesfun.utils.textChanges
+import com.github.pksokolowski.coroutinesfun.utils.textChangesWithSuggestions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -43,10 +43,9 @@ class StandAlonesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.input.textChanges()
+        binding.input.textChangesWithSuggestions(commands.keys.toList())
             .filterNotNull()
             .debounce(300)
-            .map { it.toString() }
             .onEach(::handleCommand)
             .launchIn(lifecycleScope)
 
