@@ -483,6 +483,41 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .launchIn(samplesScope)
     }
 
+    fun sharedWithoutBackpressure() {
+        output("creating a sharedFlow with buffer of 1 and DROP_OLDEST policy, then observing slowly 1..10")
+        val sharedFlow = (1..10).asFlow()
+            .onEach { output("produced $it") }
+            .conflate()
+            .shareIn(samplesScope, SharingStarted.Lazily, 1)
+
+        sharedFlow
+            .onEach {
+                delay(1000)
+                output("Consumed $it")
+            }
+            .takeWhile {
+                // converting the flow to a completable one
+                // notice it is after the onEach, so 10 is first consumed there
+                // and here takeWhile is provided with a lambda returning false for 10
+                // given the false, takeWhile completes the flow. Needless to say
+                // that the sharedFlow upstream stays intact.
+                // Overall this works because we know we will get the 10 and don't care to
+                // receive any further values, if any appear upstream.
+                it < 10
+            }
+            .launchIn(samplesScope)
+            .invokeOnCompletion {
+                output("starting a late subscriber...")
+                sharedFlow
+                    .onEach {
+                        delay(500)
+                        output("LateOne consumed $it")
+                    }
+                    .launchIn(samplesScope)
+            }
+
+    }
+
     fun <T> List<T>.emit(delay: Long): Flow<T> = flow {
         forEach {
             delay(delay)

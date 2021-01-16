@@ -91,6 +91,7 @@ class StandAlonesFragment : Fragment() {
         "shared-across" to { viewModel.sharedFlowFromAnotherCoroutineScope() },
         "shared-same" to { viewModel.sharedFlowFromAnotherCoroutineScope(true) },
         "shared-2" to { viewModel.secondSubscriberOfSharedFlow() },
+        "shared-drop-oldest" to { viewModel.sharedWithoutBackpressure() }
     )
 
     @SuppressLint("SetTextI18n")
