@@ -13,6 +13,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.random.Random
 
+@FlowPreview
 class StandAlonesViewModel @ViewModelInject constructor(
 
 ) : ViewModel() {
@@ -516,5 +517,41 @@ class StandAlonesViewModel @ViewModelInject constructor(
             delay(delay)
             emit(it)
         }
+    }
+
+    fun flatMapMerge() {
+        data class Author(val id: Long, val name: String)
+        data class Post(val id: Long, val authorId: Long, val content: String)
+
+        val dataSource = hashMapOf<Author, List<Post>>(
+            Author(1, "Stefan") to listOf(Post(1, 1, "kopkop"), Post(1, 2, "abc!")),
+            Author(2, "Marian") to listOf(Post(3, 2, "Lorem ipsum...")),
+        )
+
+        fun getAuthors() = flow {
+            val authors = dataSource.keys
+            authors.forEach {
+                delay(Random.nextLong(100))
+                emit(it)
+            }
+        }
+
+        fun getPosts(author: Author) = flow {
+            val posts = dataSource[author]
+            posts?.forEach {
+                delay(Random.nextLong(100))
+                emit(it)
+            }
+        }
+
+        getAuthors()
+            .flowOn(Dispatchers.IO)
+            .flatMapMerge { author ->
+                getPosts(author)
+            }
+            .onEach { post ->
+                output("got post: $post")
+            }
+            .launchIn(samplesScope)
     }
 }
