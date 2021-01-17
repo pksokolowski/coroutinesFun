@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 @FlowPreview
 class StandAlonesViewModel @ViewModelInject constructor(
@@ -553,5 +554,31 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 output("got post: $post")
             }
             .launchIn(samplesScope)
+    }
+
+    fun executionTime() {
+        val channel = Channel<Long>()
+
+        samplesScope.launch {
+            val timeTaken = measureTimeMillis {
+                output("started a long running operation...")
+                delay(3000)
+                output("finished the long running operation.")
+            }
+            channel.offer(timeTaken)
+        }
+
+        samplesScope.launch {
+            channel.consumeEach { duration ->
+                output("New operation duration captured! It took: $duration")
+            }
+        }
+
+        // note: can also consume it as a flow, like so:
+//        channel.consumeAsFlow()
+//            .onEach { duration ->
+//                output("(as flow) New operation duration captured! It took: $duration")
+//            }
+//            .launchIn(samplesScope)
     }
 }

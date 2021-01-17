@@ -91,7 +91,8 @@ class StandAlonesFragment : Fragment() {
         "shared-same" to { viewModel.sharedFlowFromAnotherCoroutineScope(true) },
         "shared-2" to { viewModel.secondSubscriberOfSharedFlow() },
         "shared-drop-oldest" to { viewModel.sharedWithoutBackpressure() },
-        "flatMapMerge" to { viewModel.flatMapMerge() }
+        "flatMapMerge" to { viewModel.flatMapMerge() },
+        "execution-time" to { viewModel.executionTime() },
     )
 
     @SuppressLint("SetTextI18n")
