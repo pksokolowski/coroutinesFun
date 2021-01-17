@@ -20,8 +20,8 @@ class StandAlonesViewModel @ViewModelInject constructor(
     private val _output = MutableSharedFlow<String>()
     val output: SharedFlow<String> = _output
 
-    private var samplesScope = getNewImmediateScope()
-    private var computationScope = getNewComputationScope()
+    private var samplesScope = CoroutineScope(Dispatchers.Main.immediate)
+    private var computationScope = CoroutineScope(Dispatchers.Default)
 
     private fun output(content: String) {
         viewModelScope.launch {
@@ -29,17 +29,10 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
-    fun resetUtilityScopes() {
-        samplesScope.cancel()
-        computationScope.cancel()
-
-        samplesScope = getNewScopeOnMainDispatcher()
-        computationScope = getNewComputationScope()
+    fun cancelSampleJobs() {
+        samplesScope.coroutineContext.cancelChildren()
+        computationScope.coroutineContext.cancelChildren()
     }
-
-    private fun getNewComputationScope() = CoroutineScope(Dispatchers.Default)
-    private fun getNewScopeOnMainDispatcher() = CoroutineScope(Dispatchers.Main)
-    private fun getNewImmediateScope() = CoroutineScope(Dispatchers.Main.immediate)
 
     override fun onCleared() {
         super.onCleared()

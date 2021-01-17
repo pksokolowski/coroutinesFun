@@ -113,10 +113,10 @@ class StandAlonesFragment : Fragment() {
 
     private fun handleCommand(input: String) {
         clearOutput()
-        viewModel.resetUtilityScopes()
+        viewModel.cancelSampleJobs()
         val command = commands[input]
         if (command == null) {
-            viewModel.resetUtilityScopes()
+            viewModel.cancelSampleJobs()
             displayAllKnownCommands()
             return
         }
