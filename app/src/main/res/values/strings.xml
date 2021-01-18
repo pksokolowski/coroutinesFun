@@ -18,6 +18,10 @@
     <string name="flows_user_email">User e-mail address</string>
     <string name="flows_button_cycle_user_data">cycle user data</string>
     <string name="flows_user_physical_address">User address</string>
+    <string name="flows_button_send_event">send event</string>
+    <string name="flows_button_set_state">Set state</string>
+    <string name="flows_button_resubscribe">resubscribe</string>
+    <string name="flows_button_send_single_event">send single sharedFlow event</string>
 
     <string name="persistence_input_hint_description">animal description</string>
     <string name="persistence_input_hint_name">animal name</string>
