@@ -16,7 +16,7 @@ import kotlin.system.measureTimeMillis
 
 @FlowPreview
 class StandAlonesViewModel @ViewModelInject constructor(
-
+    private val backgroundWorkUseCase: BackgroundWorkUseCase
 ) : ViewModel() {
 
     private val _output = MutableSharedFlow<String>()
@@ -580,5 +580,13 @@ class StandAlonesViewModel @ViewModelInject constructor(
 //                output("(as flow) New operation duration captured! It took: $duration")
 //            }
 //            .launchIn(samplesScope)
+    }
+
+    fun runBackgroundWork() {
+        samplesScope.launch {
+            output("Viewmodel uses a use-case for some background work, rather than dealing with background thread itself")
+            val result = backgroundWorkUseCase.computeSomething(1)
+            output("result is $result")
+        }
     }
 }

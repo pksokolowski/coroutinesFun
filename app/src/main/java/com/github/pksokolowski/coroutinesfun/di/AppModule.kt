@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.github.pksokolowski.coroutinesfun.db.AppDatabase
 import com.github.pksokolowski.coroutinesfun.db.dao.AnimalsDao
 import com.github.pksokolowski.coroutinesfun.db.dao.PrimeCandidateDao
+import com.github.pksokolowski.coroutinesfun.features.standalones.BackgroundWorkUseCase
 import com.github.pksokolowski.coroutinesfun.repository.AnimalsRepository
 import com.github.pksokolowski.coroutinesfun.repository.PrimeCandidatesRepository
 import com.github.pksokolowski.coroutinesfun.repository.implementations.AnimalsRepositoryImpl
@@ -55,5 +56,10 @@ object AppModule {
     @Provides
     fun providesPrimeCandidatesRepository(primeCandidateDao: PrimeCandidateDao): PrimeCandidatesRepository {
         return PrimeCandidatesRepositoryImpl(primeCandidateDao)
+    }
+
+    @Provides
+    fun providesBackgroundWorkUseCase(): BackgroundWorkUseCase {
+        return BackgroundWorkUseCase()
     }
 }

@@ -93,6 +93,7 @@ class StandAlonesFragment : Fragment() {
         "shared-drop-oldest" to { viewModel.sharedWithoutBackpressure() },
         "flatMapMerge" to { viewModel.flatMapMerge() },
         "execution-time" to { viewModel.executionTime() },
+        "background-work" to { viewModel.runBackgroundWork() },
     )
 
     @SuppressLint("SetTextI18n")
