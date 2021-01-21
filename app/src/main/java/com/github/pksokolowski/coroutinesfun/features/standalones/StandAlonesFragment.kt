@@ -94,6 +94,7 @@ class StandAlonesFragment : Fragment() {
         "flatMapMerge" to { viewModel.flatMapMerge() },
         "execution-time" to { viewModel.executionTime() },
         "background-work" to { viewModel.runBackgroundWork() },
+        "main-immediate" to { viewModel.mainImmediate() }
     )
 
     @SuppressLint("SetTextI18n")

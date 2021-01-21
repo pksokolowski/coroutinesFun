@@ -589,4 +589,17 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("result is $result")
         }
     }
+
+    fun mainImmediate() {
+        output("showcase of the difference between dispatchers main and main.immediate. ")
+        output("Basically, if already on the main thread (which is the case here) main.immediate will make the code run right away, without dispatch, like if there was no coroutine launch\n\n")
+
+        samplesScope.launch(Dispatchers.Main) {
+            output("running code in the first coroutine, on main dispatcher\n")
+        }
+
+        samplesScope.launch(Dispatchers.Main.immediate) {
+            output("running code in the second coroutine, on main.immediate dispatcher.\n")
+        }
+    }
 }
