@@ -104,8 +104,6 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("<some important cleanup>")
         }
 
-        val coroutineScope = CoroutineScope(Dispatchers.Main)
-
         @Suppress("BlockingMethodInNonBlockingContext")
         suspend fun doWork() = withContext(Dispatchers.Default) {
             repeat(6) {
@@ -117,7 +115,11 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
 
-        coroutineScope.launch() {
+        // changing dispatcher to Main, from samplesScope's Main.immediate, this is because we're
+        // already on the Main thread here (samplesScope) so Main.immediate would skip the dispatch
+        // and just run the code without adding it to the queue and moving on to the next launch
+        // below
+        val job = samplesScope.launch(Dispatchers.Main) {
             try {
                 doWork()
                 output("work finished!")
@@ -128,10 +130,10 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
 
-        GlobalScope.launch {
+        samplesScope.launch(Dispatchers.Main) {
             delay(2000)
             output("Cancelling the coroutine.")
-            coroutineScope.cancel()
+            job.cancel()
         }
     }
 
