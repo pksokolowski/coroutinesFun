@@ -137,6 +137,34 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
+    fun builtInCooperation() {
+        output("showcase of delay(), as any built-in suspend fun in coroutines, cooperate on cancellation\n")
+
+        suspend fun getRandomNumber() = withContext(Dispatchers.Default) {
+            repeat(10) {
+                // notice that there is no isActive check or ensureActive() call
+                // just a delay() call
+                delay(1000)
+                output("still working...")
+            }
+            4
+        }
+
+        val job = samplesScope.launch(Dispatchers.Main) {
+            try {
+                val number = getRandomNumber()
+            } catch (e: CancellationException) {
+                output("cancellation exception captured")
+            }
+        }
+
+        samplesScope.launch(Dispatchers.Main) {
+            delay(2000)
+            output("cancelling...")
+            job.cancel()
+        }
+    }
+
     fun withTimeoutSample() {
         output("display subsequent numbers in 1..10 with 100ms delays\nand a 1000 ms timeout\n")
         val numbersFlow = flow {
