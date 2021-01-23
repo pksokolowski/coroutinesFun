@@ -97,6 +97,7 @@ class StandAlonesFragment : Fragment() {
         "main-immediate" to { viewModel.mainImmediate() },
         "built-in cooperative cancellation" to { viewModel.builtInCooperation() },
         "adapt-one-shot-operation-to-suspend-fun" to { viewModel.oneShotToSuspend() },
+        "non-cancellable" to { viewModel.nonCancellable() },
     )
 
     @SuppressLint("SetTextI18n")

@@ -664,4 +664,47 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("result = $resource")
         }
     }
+
+    fun nonCancellable() {
+        output("running some work that should best be 'atomic' through cancellation\n")
+        // parallel lists simulate two systems, like remote api and local cache for example
+        val cache = mutableListOf<Int>()
+        val api = mutableListOf<Int>()
+
+        suspend fun addNumber(number: Int) = withContext(Dispatchers.Default) {
+            output("---starting new addNumber procedure---")
+            delay(2000)
+
+            output("beginning to write $number to db and cache...")
+            withContext(NonCancellable) {
+                api.add(number)
+                // the below delay normally cooperates on cancellation, but with the NonCancellable
+                // job, it won't interfere. This makes it a bit safer, though in real life still
+                // probably a task for another api, like WorkManager.
+                delay(2000)
+                cache.add(number)
+            }
+
+            output("finished work, returning")
+            Unit
+        }
+
+        val addNumbersJob = samplesScope.launch(Dispatchers.Main) {
+            try {
+                addNumber(1)
+                addNumber(2)
+                addNumber(3)
+            } catch (e: CancellationException) {
+                output("cancellation captured")
+            } finally {
+                output("\nData saved:\nApi = $api\nCache = $cache")
+            }
+        }
+
+        samplesScope.launch(Dispatchers.Main) {
+            delay(6500)
+            addNumbersJob.cancel()
+        }
+
+    }
 }
