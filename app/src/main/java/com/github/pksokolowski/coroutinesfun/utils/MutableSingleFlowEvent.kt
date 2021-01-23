@@ -4,10 +4,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 class MutableSingleFlowEvent<T> : AbstractFlow<T>() {
+    private val mutex = ReentrantLock()
     private val callbacks = mutableListOf<(T) -> Unit>()
 
     private val events = callbackFlow {
@@ -15,12 +18,14 @@ class MutableSingleFlowEvent<T> : AbstractFlow<T>() {
             offer(item)
             Unit
         }
-        callbacks.add(callback)
-        awaitClose { callbacks.remove(callback) }
+        mutex.withLock { callbacks.add(callback) }
+        awaitClose { mutex.withLock { callbacks.remove(callback) } }
     }
 
     fun send(item: T) {
-        callbacks.forEach { it(item) }
+        mutex.withLock {
+            callbacks.forEach { it(item) }
+        }
     }
 
     override suspend fun collectSafely(collector: FlowCollector<T>) =
