@@ -4,11 +4,15 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.github.pksokolowski.coroutinesfun.utils.MutableSingleFlowEvent
+import com.github.pksokolowski.coroutinesfun.utils.asFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class FlowsViewModel @ViewModelInject constructor(
     private val usersProvider: UsersProvider
 ) : ViewModel() {
@@ -16,6 +20,9 @@ class FlowsViewModel @ViewModelInject constructor(
 
     private val _singleEvent = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 0)
     val singleEvent = _singleEvent.asSharedFlow()
+
+    private val _altSingleEvent = MutableSingleFlowEvent<String>()
+    val altSingleEvent = _altSingleEvent.asFlow()
 
     private val _event =
         MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 0)
@@ -28,6 +35,10 @@ class FlowsViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             _singleEvent.emit(content)
         }
+    }
+
+    fun sendAltSingleEvent(content: String) {
+        _altSingleEvent.send(content)
     }
 
     fun sendEvent(content: String) {

@@ -22,6 +22,7 @@
     <string name="flows_button_set_state">Set state</string>
     <string name="flows_button_resubscribe">resubscribe</string>
     <string name="flows_button_send_single_event">send single sharedFlow event</string>
+    <string name="flows_button_send_alternative_single_event">send alternative single event</string>
 
     <string name="persistence_input_hint_description">animal description</string>
     <string name="persistence_input_hint_name">animal name</string>

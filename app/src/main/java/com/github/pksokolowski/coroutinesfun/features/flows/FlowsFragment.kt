@@ -10,10 +10,12 @@ import com.github.pksokolowski.coroutinesfun.databinding.FragmentFlowsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FlowsFragment : Fragment() {
     private val viewModel: FlowsViewModel by viewModels()
@@ -61,6 +63,10 @@ class FlowsFragment : Fragment() {
         viewModel.singleEvent
             .onEach { output("observed single event") }
             .launchIn(coroutineScope)
+
+        viewModel.altSingleEvent
+            .onEach { output("observed alt single event") }
+            .launchIn(coroutineScope)
     }
 
     private fun removeEventsAndStateObservers() {
@@ -89,6 +95,10 @@ class FlowsFragment : Fragment() {
 
         binding.sendSingleEvent.setOnClickListener {
             viewModel.sendSingleEvent("new single event")
+        }
+
+        binding.sendAlternativeSingleEvent.setOnClickListener {
+            viewModel.sendAltSingleEvent("alt single event")
         }
 
         binding.reSubscribe.setOnClickListener {
