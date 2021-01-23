@@ -11,9 +11,11 @@ import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
+@ExperimentalCoroutinesApi
 @FlowPreview
 class StandAlonesViewModel @ViewModelInject constructor(
     private val backgroundWorkUseCase: BackgroundWorkUseCase
@@ -630,6 +632,36 @@ class StandAlonesViewModel @ViewModelInject constructor(
 
         samplesScope.launch(Dispatchers.Main.immediate) {
             output("running code in the second coroutine, on main.immediate dispatcher.\n")
+        }
+    }
+
+    fun oneShotToSuspend() {
+        output("turning a one-shot api to a suspending function\n")
+
+        fun oneShot(onSuccess: (String) -> Unit, onError: (throwable: Throwable) -> Unit) {
+            output("running...")
+            Thread.sleep(3000)
+            onSuccess("abc")
+        }
+
+        suspend fun oneShotSuspending() = withContext(Dispatchers.Default) {
+            suspendCancellableCoroutine<String> { continuation ->
+                oneShot(
+                    onSuccess = { result ->
+                        continuation.resume(result,
+                            onCancellation = { output("cancelled!") }
+                        )
+                    },
+                    onError = { throwable ->
+                        continuation.resumeWithException(throwable)
+                    }
+                )
+            }
+        }
+
+        samplesScope.launch {
+            val resource = oneShotSuspending()
+            output("result = $resource")
         }
     }
 }
