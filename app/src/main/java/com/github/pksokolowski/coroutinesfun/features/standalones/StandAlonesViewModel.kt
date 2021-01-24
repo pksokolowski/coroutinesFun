@@ -18,7 +18,8 @@ import kotlin.system.measureTimeMillis
 @ExperimentalCoroutinesApi
 @FlowPreview
 class StandAlonesViewModel @ViewModelInject constructor(
-    private val backgroundWorkUseCase: BackgroundWorkUseCase
+    private val backgroundWorkUseCase: BackgroundWorkUseCase,
+    private val stressSingleFlowEventUseCase: StressSingleFlowEventUseCase,
 ) : ViewModel() {
 
     private val _output = MutableSharedFlow<String>()
@@ -706,5 +707,12 @@ class StandAlonesViewModel @ViewModelInject constructor(
             addNumbersJob.cancel()
         }
 
+    }
+
+    fun stressSingleFlowEvent() {
+        output("Beginning stress test...")
+        samplesScope.launch {
+            stressSingleFlowEventUseCase.commence(1000, 10, ::output)
+        }
     }
 }
