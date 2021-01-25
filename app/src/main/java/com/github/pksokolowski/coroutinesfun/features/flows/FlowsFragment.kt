@@ -6,20 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.github.pksokolowski.coroutinesfun.databinding.FragmentFlowsBinding
+import com.github.pksokolowski.coroutinesfun.utils.observe
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FlowsFragment : Fragment() {
     private val viewModel: FlowsViewModel by viewModels()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
 
     private var _binding: FragmentFlowsBinding? = null
     private val binding get() = _binding!!
@@ -31,11 +28,6 @@ class FlowsFragment : Fragment() {
     ): View {
         _binding = FragmentFlowsBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onStop() {
-        super.onStop()
-        coroutineScope.coroutineContext.cancelChildren()
     }
 
     override fun onDestroyView() {
@@ -60,19 +52,19 @@ class FlowsFragment : Fragment() {
             output("observed state")
         }
 
-        viewModel.singleEvent
-            .onEach { output("observed single event") }
-            .launchIn(coroutineScope)
+        lifecycleScope.observe(viewModel.singleEvent) {
+            output("observed single event")
+        }
 
-        viewModel.altSingleEvent
-            .onEach { output("observed alt single event") }
-            .launchIn(coroutineScope)
+        lifecycleScope.observe(viewModel.altSingleEvent) {
+            output("observed alt single event")
+        }
     }
 
     private fun removeEventsAndStateObservers() {
         viewModel.event.removeObservers(viewLifecycleOwner)
         viewModel.state.removeObservers(viewLifecycleOwner)
-        coroutineScope.coroutineContext.cancelChildren()
+        lifecycleScope.coroutineContext.cancelChildren()
     }
 
     private fun output(content: String?) {

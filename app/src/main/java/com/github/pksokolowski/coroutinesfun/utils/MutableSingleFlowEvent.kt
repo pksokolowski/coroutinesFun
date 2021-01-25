@@ -1,5 +1,6 @@
 package com.github.pksokolowski.coroutinesfun.utils
 
+import androidx.lifecycle.LifecycleCoroutineScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -22,3 +23,9 @@ class MutableSingleFlowEvent<T> : AbstractFlow<T>() {
 @FlowPreview
 @ExperimentalCoroutinesApi
 fun <T> MutableSingleFlowEvent<T>.asFlow() = this as Flow<T>
+
+fun <T> LifecycleCoroutineScope.observe(flow: Flow<T>, block: (T) -> Unit) = launchWhenStarted {
+    flow.collect { item ->
+        block(item)
+    }
+}
