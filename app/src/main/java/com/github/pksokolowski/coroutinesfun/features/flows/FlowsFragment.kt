@@ -52,11 +52,13 @@ class FlowsFragment : Fragment() {
             output("observed state")
         }
 
+        // below two ways of approaching flows in a lifecycle-aware manner are presented
+
         lifecycleScope.observe(viewModel.singleEvent) {
             output("observed single event")
         }
 
-        lifecycleScope.observe(viewModel.altSingleEvent) {
+        observe(viewModel.altSingleEvent) {
             output("observed alt single event")
         }
     }

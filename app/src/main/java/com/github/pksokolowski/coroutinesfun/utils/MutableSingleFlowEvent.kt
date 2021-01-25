@@ -1,6 +1,9 @@
 package com.github.pksokolowski.coroutinesfun.utils
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -29,3 +32,9 @@ fun <T> LifecycleCoroutineScope.observe(flow: Flow<T>, block: (T) -> Unit) = lau
         block(item)
     }
 }
+
+fun <T> Fragment.observe(flow: Flow<T>, block: (T) -> Unit) =
+    lifecycleScope.observe(flow, block)
+
+fun <T> AppCompatActivity.observe(flow: Flow<T>, block: (T) -> Unit) =
+    lifecycleScope.observe(flow, block)
