@@ -727,4 +727,23 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
     }
+
+    fun newScopeVsNewJob() {
+        output("fun with distinction between new context/scope and new job across concurrency structure")
+        samplesScope.launch {
+            output("1")
+            withContext(Dispatchers.Default) {
+                delay(100)
+                output("2")
+            }
+            output("3")
+            val job = launch {
+                delay(100)
+                output("5")
+            }
+            output("4")
+            job.join()
+            output("6")
+        }
+    }
 }

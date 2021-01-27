@@ -100,6 +100,7 @@ class StandAlonesFragment : Fragment() {
         "non-cancellable" to { viewModel.nonCancellable() },
         "stress-single-flow-event" to { viewModel.stressSingleFlowEvent() },
         "leak a job" to { viewModel.simpleLeakTest() },
+        "new-job vs new-scope/context" to { viewModel.newScopeVsNewJob() },
     )
 
     @SuppressLint("SetTextI18n")
