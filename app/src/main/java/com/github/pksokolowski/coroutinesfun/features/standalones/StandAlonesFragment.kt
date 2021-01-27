@@ -99,6 +99,7 @@ class StandAlonesFragment : Fragment() {
         "adapt-one-shot-operation-to-suspend-fun" to { viewModel.oneShotToSuspend() },
         "non-cancellable" to { viewModel.nonCancellable() },
         "stress-single-flow-event" to { viewModel.stressSingleFlowEvent() },
+        "leak a job" to { viewModel.simpleLeakTest() },
     )
 
     @SuppressLint("SetTextI18n")

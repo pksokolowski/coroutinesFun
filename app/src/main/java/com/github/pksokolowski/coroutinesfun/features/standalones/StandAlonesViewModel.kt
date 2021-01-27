@@ -1,5 +1,6 @@
 package com.github.pksokolowski.coroutinesfun.features.standalones
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -713,6 +714,17 @@ class StandAlonesViewModel @ViewModelInject constructor(
         output("Beginning stress test...")
         samplesScope.launch {
             stressSingleFlowEventUseCase.commence(1000, 10, ::output)
+        }
+    }
+
+    fun simpleLeakTest() {
+        output("Leaking a job, please check logcat with tag leaktest")
+        CoroutineScope(Dispatchers.Main).launch {
+            var i = 0
+            while (true) {
+                Log.d("leaktest", "a leaked job is still kicking :), here since ${i++} sec")
+                delay(1000)
+            }
         }
     }
 }
