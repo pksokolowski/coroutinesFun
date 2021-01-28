@@ -729,8 +729,8 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
-    fun newScopeVsNewJob() {
-        output("fun with distinction between new context/scope and new job across concurrency structure")
+    fun newScopeVsNewCoroutine() {
+        output("fun with distinction between new scope (along with its job) and a new coroutine - not every new scope(and its job) has a new coroutine")
         samplesScope.launch {
             output("1")
             withContext(Dispatchers.Default) {
