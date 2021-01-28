@@ -16,6 +16,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
+@ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 @FlowPreview
 class StandAlonesViewModel @ViewModelInject constructor(
@@ -744,6 +745,23 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("4")
             job.join()
             output("6")
+        }
+    }
+
+    fun yieldSample() {
+        output("first job is quicker and starts first, but calls yield() claiming thus that its work can wait and other jobs can be considered higher priority")
+        output("since this example runs on a singleThread, this means the first job is suspended immediately and the second one gets to execute\n\n running...\n")
+        samplesScope.launch(newSingleThreadContext("single")) {
+            launch {
+                yield()
+                Thread.sleep(1000)
+                output("first job finished")
+            }
+
+            launch {
+                Thread.sleep(2000)
+                output("second job finished")
+            }
         }
     }
 }

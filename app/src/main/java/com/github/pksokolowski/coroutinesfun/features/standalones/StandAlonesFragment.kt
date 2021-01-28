@@ -14,8 +14,10 @@ import com.github.pksokolowski.coroutinesfun.utils.textChangesWithSuggestions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.*
 
+@ObsoleteCoroutinesApi
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
@@ -101,6 +103,7 @@ class StandAlonesFragment : Fragment() {
         "stress-single-flow-event" to { viewModel.stressSingleFlowEvent() },
         "leak a job" to { viewModel.simpleLeakTest() },
         "new-job vs new-scope/context" to { viewModel.newScopeVsNewJob() },
+        "yield" to { viewModel.yieldSample() },
     )
 
     @SuppressLint("SetTextI18n")
