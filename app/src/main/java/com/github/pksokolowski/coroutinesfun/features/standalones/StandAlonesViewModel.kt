@@ -16,6 +16,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
+@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -761,6 +762,31 @@ class StandAlonesViewModel @ViewModelInject constructor(
             launch {
                 Thread.sleep(2000)
                 output("second job finished")
+            }
+        }
+    }
+
+    fun dispatchersComparison() {
+        suspend fun runSampleOn(dispatcher: CoroutineDispatcher) = withContext(dispatcher) {
+            listOf(
+                async(Dispatchers.Main) { output("Job 1 on ${coroutineContext[CoroutineDispatcher]}") },
+                async(Dispatchers.Default) { output("Job 2 on ${coroutineContext[CoroutineDispatcher]}") },
+                async(Dispatchers.Unconfined) { output("Job 3 on ${coroutineContext[CoroutineDispatcher]}") },
+                async(Dispatchers.Main.immediate) { output("Job 4 on ${coroutineContext[CoroutineDispatcher]}") },
+            ).awaitAll()
+            output("--- end of test, awaited all ---")
+            delay(100)
+        }
+
+        samplesScope.launch {
+            listOf(
+                Dispatchers.Main,
+                Dispatchers.Default,
+                Dispatchers.Unconfined,
+                Dispatchers.Main.immediate,
+            ).forEach {
+                output("\n--- new test, starting on $it")
+                runSampleOn(it)
             }
         }
     }

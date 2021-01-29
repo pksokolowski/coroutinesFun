@@ -2,6 +2,7 @@ package com.github.pksokolowski.coroutinesfun.features.standalones
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,8 @@ class StandAlonesFragment : Fragment() {
         displayAllKnownCommands()
         binding.input.requestFocus()
 
+        binding.output.movementMethod = ScrollingMovementMethod()
+
         observeViewModelOutput()
     }
 
@@ -104,6 +107,7 @@ class StandAlonesFragment : Fragment() {
         "leak a job" to { viewModel.simpleLeakTest() },
         "new-scope/job vs new-coroutine" to { viewModel.newScopeVsNewCoroutine() },
         "yield" to { viewModel.yieldSample() },
+        "dispatchers" to { viewModel.dispatchersComparison() },
     )
 
     @SuppressLint("SetTextI18n")
