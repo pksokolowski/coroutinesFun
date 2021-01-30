@@ -796,4 +796,19 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
     }
+
+    fun structuredConcurrencyTest() {
+        output("launching a concurrent coroutine within withContext placed inside another coroutine and testing if the outer coroutine waits for the inside one\n")
+        samplesScope.launch(Dispatchers.Default) {
+            withContext(CoroutineName("withContext")) {
+                // launch is concurrent... within its scope
+                launch(CoroutineName("inner coroutine")) {
+                    delay(1000)
+                    output("inner coroutine finished.")
+                }
+                output("withContext's block finished all of it's things")
+            }
+            output("--- out of the withContext block ---")
+        }
+    }
 }

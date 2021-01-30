@@ -109,6 +109,7 @@ class StandAlonesFragment : Fragment() {
         "new-scope/job vs new-coroutine" to { viewModel.newScopeVsNewCoroutine() },
         "yield" to { viewModel.yieldSample() },
         "dispatchers" to { viewModel.dispatchersComparison() },
+        "structured-concurrency" to { viewModel.structuredConcurrencyTest() },
     )
 
     @SuppressLint("SetTextI18n")
