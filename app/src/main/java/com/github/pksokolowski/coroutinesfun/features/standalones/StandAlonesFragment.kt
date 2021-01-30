@@ -18,6 +18,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.*
 
+@ExperimentalStdlibApi
 @ObsoleteCoroutinesApi
 @FlowPreview
 @ExperimentalCoroutinesApi

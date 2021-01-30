@@ -1,11 +1,11 @@
 ext.deps = [:]
 def versions = [:]
 versions.activity = '1.1.0'
-versions.android_gradle_plugin = '4.1.1'
+versions.android_gradle_plugin = '4.1.2'
 versions.arch_core = "2.1.0"
 versions.constraint_layout = "2.0.0-alpha2"
 versions.core_ktx = "1.1.0"
-versions.coroutines = "1.4.0"
+versions.coroutines = "1.4.2"
 versions.dagger_hilt = "2.28-alpha"
 versions.dagger_hilt_lifecycle = "1.0.0-alpha02"
 versions.dexmaker = "2.2.0"

@@ -5,6 +5,7 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@ExperimentalStdlibApi
 @AndroidEntryPoint
 class MainNavHostFragment : NavHostFragment() {
     @Inject

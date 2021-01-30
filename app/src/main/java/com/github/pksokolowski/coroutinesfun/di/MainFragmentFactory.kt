@@ -9,6 +9,7 @@ import com.github.pksokolowski.coroutinesfun.features.start.StartScreenFragment
 import com.github.pksokolowski.coroutinesfun.features.work.WorkFragment
 import javax.inject.Inject
 
+@ExperimentalStdlibApi
 class MainFragmentFactory @Inject constructor(
     private val someDependency: String
 ) : FragmentFactory() {
