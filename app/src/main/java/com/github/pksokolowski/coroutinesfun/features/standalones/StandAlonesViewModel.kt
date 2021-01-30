@@ -680,6 +680,12 @@ class StandAlonesViewModel @ViewModelInject constructor(
             delay(2000)
 
             output("beginning to write $number to db and cache...")
+            // note that the way NonCancellable works is by essentially taking the block out of the
+            // current jobs hierarchy. This means that if we instead just instantiated a job like
+            // Job() instead of providing the NonCancellable, it would do very much the same thing.
+            // On top of structured concurrency - which btw still holds even though the hierarchy
+            // of jobs is breached - the cancellation propagation is build, but it in turn is
+            // sensitive to the breach, and won't reach the jobs taken out of it.
             withContext(NonCancellable) {
                 api.add(number)
                 // the below delay normally cooperates on cancellation, but with the NonCancellable
