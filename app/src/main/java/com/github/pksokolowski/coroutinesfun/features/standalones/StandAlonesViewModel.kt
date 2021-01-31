@@ -103,7 +103,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
         """.trimIndent()
         )
 
-        fun someImportantAction() {
+        suspend fun someImportantAction() = withContext(Dispatchers.Default) {
             output("<some important cleanup>")
         }
 
@@ -129,7 +129,14 @@ class StandAlonesViewModel @ViewModelInject constructor(
             } catch (e: CancellationException) {
                 output("cancellation exception caught!")
             } finally {
-                someImportantAction()
+                // note that since we use a suspending function here, we can expect it to - by convention
+                // support cooperative cancellation, thus the function won't run in case the
+                // coroutine was cancelled, unless we pull it out of the jobs hierarchy where the
+                // cancellation happened, which can be done with NonCancellableScope to keep our
+                // intentions clear.
+                withContext(NonCancellable) {
+                    someImportantAction()
+                }
             }
         }
 
