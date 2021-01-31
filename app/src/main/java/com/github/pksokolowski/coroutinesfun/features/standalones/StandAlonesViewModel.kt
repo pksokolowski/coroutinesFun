@@ -777,27 +777,33 @@ class StandAlonesViewModel @ViewModelInject constructor(
     }
 
     fun dispatchersComparison() {
-        suspend fun runSampleOn(dispatcher: CoroutineDispatcher) = withContext(dispatcher) {
-            listOf(
-                async(Dispatchers.Main) { output("Job 1 on ${coroutineContext[CoroutineDispatcher]}") },
-                async(Dispatchers.Default) { output("Job 2 on ${coroutineContext[CoroutineDispatcher]}") },
-                async(Dispatchers.Unconfined) { output("Job 3 on ${coroutineContext[CoroutineDispatcher]}") },
-                async(Dispatchers.Main.immediate) { output("Job 4 on ${coroutineContext[CoroutineDispatcher]}") },
-            ).awaitAll()
-            output("--- end of test, awaited all ---")
-            delay(100)
-        }
+        suspend fun runSampleOn(dispatcher: CoroutineDispatcher): String =
+            withContext(dispatcher) {
+                val builder = StringBuffer()
+                coroutineScope {
+                    launch(Dispatchers.Main) { builder.appendLine("Job 1 on ${coroutineContext[CoroutineDispatcher]}") }
+                    launch(Dispatchers.Default) { builder.appendLine("Job 2 on ${coroutineContext[CoroutineDispatcher]}") }
+                    launch(Dispatchers.Unconfined) { builder.appendLine("Job 3 on ${coroutineContext[CoroutineDispatcher]}") }
+                    launch(Dispatchers.Main.immediate) { builder.appendLine("Job 4 on ${coroutineContext[CoroutineDispatcher]}") }
+                }
+                builder.appendLine("--- end of test ---")
+                builder.toString()
+            }
 
         samplesScope.launch {
+            val outputs = StringBuffer()
             listOf(
                 Dispatchers.Main,
                 Dispatchers.Default,
                 Dispatchers.Unconfined,
                 Dispatchers.Main.immediate,
             ).forEach {
-                output("\n--- new test, starting on $it")
-                runSampleOn(it)
+                outputs.appendLine("\n--- new test, starting on $it")
+                val newOutputs = runSampleOn(it)
+                outputs.append(newOutputs)
             }
+
+            output(outputs.toString())
         }
     }
 
