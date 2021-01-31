@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.pksokolowski.coroutinesfun.R
 import com.github.pksokolowski.coroutinesfun.databinding.FragmentStandalonesBinding
+import com.github.pksokolowski.coroutinesfun.features.standalones.StandAlonesViewModel.ParallelExecMode
 import com.github.pksokolowski.coroutinesfun.utils.textChangesWithSuggestions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -110,6 +111,9 @@ class StandAlonesFragment : Fragment() {
         "yield" to { viewModel.yieldSample() },
         "dispatchers" to { viewModel.dispatchersComparison() },
         "structured-concurrency" to { viewModel.structuredConcurrencyTest() },
+        "parallel-perf-flow" to { viewModel.parallelExecutionPerf(ParallelExecMode.FLOW) },
+        "parallel-perf-fanout" to { viewModel.parallelExecutionPerf(ParallelExecMode.FAN_OUT) },
+        "parallel-perf-launch" to { viewModel.parallelExecutionPerf(ParallelExecMode.LAUNCH_INDEPENDENTLY) },
     )
 
     @SuppressLint("SetTextI18n")

@@ -5,10 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -810,5 +807,85 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
             output("--- out of the withContext block ---")
         }
+    }
+
+    enum class ParallelExecMode {
+        FLOW,
+        LAUNCH_INDEPENDENTLY,
+        FAN_OUT
+    }
+
+    fun parallelExecutionPerf(mode: ParallelExecMode) {
+        output("perf test with mode: $mode\n")
+
+        data class User(val id: Long)
+
+        fun getUserIds() = listOf<Long>(1, 2, 3)
+
+        suspend fun getUser(id: Long) = withContext(Dispatchers.IO) {
+            delay(500)
+            val user = User(id)
+            output("- got $user")
+            user
+        }
+
+        suspend fun saveUserToCache(user: User) = withContext(Dispatchers.IO) {
+            delay(500)
+            output("- cached $user")
+        }
+
+        samplesScope.launch {
+            val timePassed = measureTimeMillis {
+                coroutineScope {
+                    when (mode) {
+                        ParallelExecMode.FLOW -> {
+
+                            getUserIds().asFlow()
+                                .map { getUser(it) }
+                                .buffer()
+                                .onEach { saveUserToCache(it) }
+                                .launchIn(this)
+
+                            // --------------------------------------------------------------------
+                        }
+                        ParallelExecMode.LAUNCH_INDEPENDENTLY -> {
+
+                            getUserIds().forEach { userId ->
+                                launch {
+                                    val user = getUser(userId)
+                                    saveUserToCache(user)
+                                }
+                            }
+
+                            // --------------------------------------------------------------------
+                        }
+                        ParallelExecMode.FAN_OUT -> {
+
+                            val users = produce {
+                                getUserIds().forEach { userId ->
+                                    launch {
+                                        val user = getUser(userId)
+                                        send(user)
+                                    }
+                                }
+                            }
+
+                            repeat(10) {
+                                launch {
+                                    while (isActive) {
+                                        val user = users.receiveOrNull() ?: break
+                                        saveUserToCache(user)
+                                    }
+                                }
+                            }
+
+                            // --------------------------------------------------------------------
+                        }
+                    }
+                }
+            }
+            output("\n Took $timePassed ms")
+        }
+
     }
 }
