@@ -921,4 +921,22 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
     }
+
+    fun tryCatchExceptionsAndCancellation() {
+        samplesScope.launch() {
+            output("when using try-catch around an exception throw, sibling coroutines will be independent from the caught exception \n")
+            launch {
+                delay(1000)
+                output("A sibling coroutine survived and executed!")
+            }
+            launch {
+                delay(500)
+                try {
+                    throw RuntimeException("exception was thrown")
+                } catch (e: Exception) {
+                    output("caught exception")
+                }
+            }
+        }
+    }
 }
