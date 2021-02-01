@@ -75,6 +75,7 @@ class StandAlonesFragment : Fragment() {
         "simple1" to { viewModel.runSomeFunCoroutines() },
         "fakenet" to { viewModel.runHandleExceptions(false) },
         "fakenet-exception" to { viewModel.runHandleExceptions((true)) },
+        "exceptions and cancellation" to { viewModel.exceptionsAndCancellation() },
         "timeout" to { viewModel.withTimeoutSample() },
         "transform" to { viewModel.transformSample() },
         "buffer" to { viewModel.bufferSample(true) },

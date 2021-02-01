@@ -9,6 +9,8 @@ import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.lang.Exception
+import java.lang.RuntimeException
 import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
@@ -900,5 +902,23 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("\n Took $timePassed ms")
         }
 
+    }
+
+    fun exceptionsAndCancellation() {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("caught exception")
+        }
+
+        samplesScope.launch(exceptionHandler) {
+            output("when using coroutineExceptionHandlers, cancellation propagates anyway, despite our attempts to handle an exception which caused the cancellation to start\n")
+            launch {
+                delay(1000)
+                output("A sibling coroutine survived and executed!")
+            }
+            launch {
+                delay(500)
+                throw RuntimeException("exception was thrown")
+            }
+        }
     }
 }
