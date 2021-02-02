@@ -942,6 +942,63 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
+    /***
+     * Note that this one is a sample of what not to do, as value.await() will re-throw the exception
+     * and cancel the entire samplesScope, rendering the app less useful from that point on.
+     */
+    fun exceptionsAndSupervisorJobWithDeferredUnusedBecauseItsIncorrectUseSample() {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("caught exception")
+        }
+
+        samplesScope.launch(exceptionHandler) {
+            supervisorScope {
+                output("when using SupervisorJob and throwing exception in an async's block, cancellation propagates and cancels the entire samplesScope for good, it will silently fail to run any coroutines from that point on\n")
+                launch {
+                    delay(1000)
+                    output("A sibling coroutine survived and executed!")
+                }
+                val value = async<Boolean> {
+                    delay(500)
+                    throw RuntimeException("exception was thrown")
+                }
+
+                // here the exception will be re-thrown by the coroutines framework
+                // it will trigger the exceptionHandler, but that won't stop it from cancelling
+                // the samplesScope. Essentially it would be as if there was no supervisorJob
+                // underneath it.
+                val result = value.await()
+            }
+        }
+    }
+
+    fun exceptionsAndSupervisorJobWithDeferred() {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("caught exception - unused in this example")
+        }
+
+        samplesScope.launch(exceptionHandler) {
+            // prevents cancellation of the entire scope.
+            supervisorScope {
+                output("when using SupervisorJob and throwing exception in an async's block, cancellation propagates and cancels the entire samplesScope for good, it will silently fail to run any coroutines from that point on\n")
+                launch {
+                    delay(1000)
+                    output("A sibling coroutine survived and executed!")
+                }
+                val value = async<Boolean> {
+                    delay(500)
+                    throw RuntimeException("exception was thrown")
+                }
+
+                val result = try {
+                    value.await()
+                } catch (e: RuntimeException) {
+                    output("caught the exeption in try catch around await() call on deferred\n")
+                }
+            }
+        }
+    }
+
     fun tryCatchExceptionsAndCancellation() {
         samplesScope.launch() {
             output("when using try-catch around an exception throw, sibling coroutines will be independent from the caught exception \n")
