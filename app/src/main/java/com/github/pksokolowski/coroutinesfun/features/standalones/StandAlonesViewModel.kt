@@ -922,6 +922,26 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
+    fun exceptionsAndSupervisorJob() {
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("caught exception")
+        }
+
+        samplesScope.launch(exceptionHandler) {
+            supervisorScope {
+                output("when using SupervisorJob, cancellation doesn't propagate to a sibling coroutine\n")
+                launch {
+                    delay(1000)
+                    output("A sibling coroutine survived and executed!")
+                }
+                launch {
+                    delay(500)
+                    throw RuntimeException("exception was thrown")
+                }
+            }
+        }
+    }
+
     fun tryCatchExceptionsAndCancellation() {
         samplesScope.launch() {
             output("when using try-catch around an exception throw, sibling coroutines will be independent from the caught exception \n")
