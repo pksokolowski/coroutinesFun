@@ -1,5 +1,6 @@
 package com.github.pksokolowski.coroutinesfun.features.standalones
 
+import android.accounts.NetworkErrorException
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
@@ -1017,7 +1018,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
     }
 
-    fun nestedExceptionHandlerBeingIgnored(){
+    fun nestedExceptionHandlerBeingIgnored() {
         output("coroutines rely on their parent to handle exceptions, but nested coroutines will have their exceptions handled by the nearest one up the hierarchy.\n")
 
         val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
@@ -1038,5 +1039,58 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 }
             }
         }
+    }
+
+    fun backupFlow() {
+        data class WeatherUpdate(val wind: Int)
+
+        suspend fun isConnected(): Boolean {
+            delay(100)
+            val isConnected = Random.nextInt(100) > 50
+            output("connection check: connected = $isConnected")
+            return isConnected
+        }
+
+        val weather = flow {
+            output("Started weather flow!")
+            while (true) {
+                delay(1000)
+                if (Random.nextInt(100) > 70) throw NetworkErrorException("no connection to server")
+                emit(WeatherUpdate(Random.nextInt(100)))
+            }
+        }
+
+        @Suppress("BlockingMethodInNonBlockingContext")
+        val predictedWeather = channelFlow {
+            output("Started predicted weather flow!")
+            launch(Dispatchers.Default) {
+                while (currentCoroutineContext().isActive) {
+                    Thread.sleep(50)
+                    send((WeatherUpdate(Random.nextInt(100))))
+                }
+            }
+        }
+
+        val backupSource = predictedWeather
+            .conflate()
+            .shareIn(
+                samplesScope,
+                replay = 1,
+                started = SharingStarted.WhileSubscribed(10_000, 60_000)
+            )
+
+        weather
+            .retryWhen { cause, attempt ->
+                isConnected()
+            }
+            .catch {
+                output("failure, switching to backup")
+                emitAll(
+                    backupSource
+                        .sample(1000)
+                )
+            }
+            .onEach { output("got forecast: ${it.wind}") }
+            .launchIn(samplesScope)
     }
 }

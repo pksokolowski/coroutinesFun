@@ -119,6 +119,7 @@ class StandAlonesFragment : Fragment() {
         "parallel-perf-flow" to { viewModel.parallelExecutionPerf(ParallelExecMode.FLOW) },
         "parallel-perf-fanout" to { viewModel.parallelExecutionPerf(ParallelExecMode.FAN_OUT) },
         "parallel-perf-launch" to { viewModel.parallelExecutionPerf(ParallelExecMode.LAUNCH_INDEPENDENTLY) },
+        "backup-flow" to { viewModel.backupFlow() },
     )
 
     @SuppressLint("SetTextI18n")
