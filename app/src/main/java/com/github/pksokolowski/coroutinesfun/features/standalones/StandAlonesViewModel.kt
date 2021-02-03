@@ -1016,4 +1016,27 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
     }
+
+    fun nestedExceptionHandlerBeingIgnored(){
+        output("coroutines rely on their parent to handle exceptions, but nested coroutines will have their exceptions handled by the nearest one up the hierarchy.\n")
+
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("outer handler caught the exception")
+        }
+
+        val nestedHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            output("nested handler caught the exception")
+        }
+
+        samplesScope.launch(exceptionHandler) {
+            supervisorScope {
+                launch(nestedHandler) {
+                    launch {
+                        delay(500)
+                        throw RuntimeException("exception was thrown")
+                    }
+                }
+            }
+        }
+    }
 }

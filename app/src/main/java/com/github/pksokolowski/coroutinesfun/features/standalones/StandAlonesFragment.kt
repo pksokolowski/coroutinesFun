@@ -79,6 +79,7 @@ class StandAlonesFragment : Fragment() {
         "supervisorJob" to { viewModel.exceptionsAndSupervisorJob() },
         "supervisorJobAsync" to { viewModel.exceptionsAndSupervisorJobWithDeferred() },
         "try-catch exceptions and cancellation" to { viewModel.tryCatchExceptionsAndCancellation() },
+        "nested-exception-handlers" to { viewModel.nestedExceptionHandlerBeingIgnored() },
         "timeout" to { viewModel.withTimeoutSample() },
         "transform" to { viewModel.transformSample() },
         "buffer" to { viewModel.bufferSample(true) },
