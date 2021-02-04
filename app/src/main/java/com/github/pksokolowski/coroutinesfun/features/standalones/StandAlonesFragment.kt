@@ -116,9 +116,9 @@ class StandAlonesFragment : Fragment() {
         "yield" to { viewModel.yieldSample() },
         "dispatchers" to { viewModel.dispatchersComparison() },
         "structured-concurrency" to { viewModel.structuredConcurrencyTest() },
-        "parallel-perf-flow" to { viewModel.parallelExecutionPerf(ParallelExecMode.FLOW) },
-        "parallel-perf-fanout" to { viewModel.parallelExecutionPerf(ParallelExecMode.FAN_OUT) },
-        "parallel-perf-launch" to { viewModel.parallelExecutionPerf(ParallelExecMode.LAUNCH_INDEPENDENTLY) },
+        "flow-parallel-perf" to { viewModel.parallelExecutionPerf(ParallelExecMode.FLOW) },
+        "fanout-parallel-perf" to { viewModel.parallelExecutionPerf(ParallelExecMode.FAN_OUT) },
+        "launch-parallel-perf" to { viewModel.parallelExecutionPerf(ParallelExecMode.LAUNCH_INDEPENDENTLY) },
         "backup-flow" to { viewModel.backupFlow() },
     )
 

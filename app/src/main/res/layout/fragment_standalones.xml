@@ -28,7 +28,7 @@
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="@string/standalones_type_command_hint"
-        android:inputType="textPersonName"
+        android:inputType="text"
         android:rotationX="25"
         android:textColor="#ffffff"
         android:textColorHint="#555555"
