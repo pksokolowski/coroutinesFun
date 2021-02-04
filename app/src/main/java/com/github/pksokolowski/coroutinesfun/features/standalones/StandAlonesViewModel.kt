@@ -857,9 +857,12 @@ class StandAlonesViewModel @ViewModelInject constructor(
                         ParallelExecMode.FLOW -> {
 
                             getUserIds().asFlow()
-                                .map { getUser(it) }
-                                .buffer()
-                                .onEach { saveUserToCache(it) }
+                                .flatMapMerge {
+                                    flow { emit(getUser(it)) }
+                                }
+                                .flatMapMerge {
+                                    flow<Unit> { saveUserToCache(it) }
+                                }
                                 .launchIn(this)
 
                             // --------------------------------------------------------------------
