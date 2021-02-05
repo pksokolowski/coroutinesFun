@@ -1045,7 +1045,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
     }
 
     fun backupFlow() {
-        data class WeatherUpdate(val wind: Int)
+        data class WeatherUpdate(val wind: Int, val source: String)
 
         suspend fun isConnected(): Boolean {
             delay(100)
@@ -1058,8 +1058,8 @@ class StandAlonesViewModel @ViewModelInject constructor(
             output("Started weather flow!")
             while (true) {
                 delay(1000)
-                if (Random.nextInt(100) > 70) throw NetworkErrorException("no connection to server")
-                emit(WeatherUpdate(Random.nextInt(100)))
+                if (Random.nextInt(100) > 90) throw NetworkErrorException("no connection to server")
+                emit(WeatherUpdate(Random.nextInt(100), "API"))
             }
         }
 
@@ -1069,7 +1069,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             launch(Dispatchers.Default) {
                 while (currentCoroutineContext().isActive) {
                     Thread.sleep(50)
-                    send((WeatherUpdate(Random.nextInt(100))))
+                    send((WeatherUpdate(Random.nextInt(100), "Prediction")))
                 }
             }
         }
@@ -1083,21 +1083,18 @@ class StandAlonesViewModel @ViewModelInject constructor(
             )
 
         fun getWeatherFlow(): Flow<WeatherUpdate> = weather
-            .retryWhen { cause, attempt ->
-                isConnected()
-            }
             .catch {
                 output("failure, switching to backup")
                 emitAll(
                     backupSource
                         .sample(1000)
-                        .take(3)
+                        .takeWhile { !isConnected() }
                         .onCompletion { emitAll(getWeatherFlow()) }
                 )
             }
 
         getWeatherFlow()
-            .onEach { output("got forecast: ${it.wind}") }
+            .onEach { output("got forecast: ${it.wind}, source = ${it.source}") }
             .launchIn(samplesScope)
     }
 }
