@@ -1082,7 +1082,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 started = SharingStarted.WhileSubscribed(10_000, 60_000)
             )
 
-        weather
+        fun getWeatherFlow(): Flow<WeatherUpdate> = weather
             .retryWhen { cause, attempt ->
                 isConnected()
             }
@@ -1091,8 +1091,12 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 emitAll(
                     backupSource
                         .sample(1000)
+                        .take(3)
+                        .onCompletion { emitAll(getWeatherFlow()) }
                 )
             }
+
+        getWeatherFlow()
             .onEach { output("got forecast: ${it.wind}") }
             .launchIn(samplesScope)
     }
