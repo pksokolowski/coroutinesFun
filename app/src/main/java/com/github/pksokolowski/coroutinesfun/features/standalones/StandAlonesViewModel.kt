@@ -345,11 +345,16 @@ class StandAlonesViewModel @ViewModelInject constructor(
 
     fun handleErrorWithDefaultSample() {
         output("trying an operation which fails, then uses a default value instead for a second operation in chain\n")
-        listOf(2).asFlow()
-            .map { it / 0 }
-            .catch {
-                output("first operation failed, using default value instead")
-                emit(1)
+        val defaultValue = 1
+
+        (1..2).asFlow()
+            .map {
+                try {
+                    it / 0
+                } catch (e: Exception) {
+                    output("operation for $it failed, using default value instead")
+                    defaultValue
+                }
             }
             .map { it * 2 }
             .onEach { output("result is $it") }
