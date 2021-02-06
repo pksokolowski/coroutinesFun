@@ -122,6 +122,7 @@ class StandAlonesFragment : Fragment() {
         "backup-flow" to { viewModel.backupFlow() },
         "composition" to { viewModel.composition() },
         "no-composition" to { viewModel.noComposition() },
+        "no-flows no-composition" to { viewModel.noFlowNoComposition() },
     )
 
     @SuppressLint("SetTextI18n")

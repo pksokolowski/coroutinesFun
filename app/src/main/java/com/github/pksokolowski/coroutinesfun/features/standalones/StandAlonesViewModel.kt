@@ -1124,7 +1124,6 @@ class StandAlonesViewModel @ViewModelInject constructor(
         fun getNumbers() =
             (1..10).asFlow()
                 .map { it.toLong() }
-                .onEach { delay(500) }
 
         fun Flow<Long>.filterProbablePrimes(): Flow<CandidateData> =
             this.flatMapMerge { candidate ->
@@ -1149,7 +1148,6 @@ class StandAlonesViewModel @ViewModelInject constructor(
 
         (1..10).asFlow()
             .map { it.toLong() }
-            .onEach { delay(500) }
             .flatMapMerge { candidate ->
                 flow {
                     delay(1000)
@@ -1162,5 +1160,29 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .flowOn(Dispatchers.Default)
             .onEach { output(it) }
             .launchIn(samplesScope)
+    }
+
+    /**
+     * Similar to [noComposition] and [composition] but done without flows.
+     */
+    fun noFlowNoComposition() {
+        data class CandidateData(val number: Long, val isLikelyPrime: Boolean)
+
+        samplesScope.launch {
+            (1..10).map {
+                val candidate = it.toLong()
+                async(Dispatchers.Default) {
+                    delay(1000)
+                    val asBigInt = BigInteger.valueOf(candidate)
+                    val isLikelyPrime = asBigInt.isProbablePrime(10_000)
+                    val candidateData = CandidateData(candidate, isLikelyPrime)
+                    candidateData
+                }
+            }.awaitAll()
+                .forEach { likelyPrime ->
+                    output(likelyPrime)
+                }
+        }
+
     }
 }
