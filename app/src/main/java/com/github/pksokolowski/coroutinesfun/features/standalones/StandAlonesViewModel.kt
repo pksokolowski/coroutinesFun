@@ -1185,4 +1185,22 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
 
     }
+
+    fun sharedFlowWithBackPressure() {
+        val shared = flow {
+            repeat(10) {
+                emit(it)
+                output("emitted $it")
+            }
+        }
+            .buffer(0)
+            .shareIn(samplesScope, SharingStarted.Lazily)
+
+        shared
+            .onEach {
+                output("handling $it")
+                delay(1000)
+            }
+            .launchIn(samplesScope)
+    }
 }
