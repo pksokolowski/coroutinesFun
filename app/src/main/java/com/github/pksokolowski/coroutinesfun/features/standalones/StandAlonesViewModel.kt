@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.pksokolowski.coroutinesfun.utils.measureCoroutineTimeMillis
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
 import kotlinx.coroutines.flow.*
@@ -12,6 +13,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.lang.Exception
 import java.lang.RuntimeException
+import java.math.BigInteger
 import kotlin.coroutines.resumeWithException
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
@@ -35,6 +37,10 @@ class StandAlonesViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             _output.emit(content)
         }
+    }
+
+    private fun output(content: Any) {
+        output(content.toString())
     }
 
     fun cancelSampleJobs() {
@@ -1100,6 +1106,61 @@ class StandAlonesViewModel @ViewModelInject constructor(
 
         getWeatherFlow()
             .onEach { output("got forecast: ${it.wind}, source = ${it.source}") }
+            .launchIn(samplesScope)
+    }
+
+    /**
+     * This sample goes hand in hand with the next one, the difference is in the way the code is
+     * structured, here separate methods and operators are used and in the [noComposition] sample
+     * everything is laid down in one chain.
+     *
+     * It appears that for non-reusable chains of operators, it doesn't look any more readable
+     * to take such streams apart, also the risk of hiding important information on their behavior
+     * is quite real, like when flowOn is called in such an operators chain.
+     */
+    fun composition() {
+        data class CandidateData(val number: Long, val isLikelyPrime: Boolean)
+
+        fun getNumbers() =
+            (1..10).asFlow()
+                .map { it.toLong() }
+                .onEach { delay(500) }
+
+        fun Flow<Long>.filterProbablePrimes(): Flow<CandidateData> =
+            this.flatMapMerge { candidate ->
+                flow {
+                    delay(1000)
+                    val asBigInt = BigInteger.valueOf(candidate)
+                    val isLikelyPrime = asBigInt.isProbablePrime(10_000)
+                    val candidateData = CandidateData(candidate, isLikelyPrime)
+                    emit(candidateData)
+                }
+            }.flowOn(Dispatchers.Default)
+
+
+        getNumbers()
+            .filterProbablePrimes()
+            .onEach { output(it) }
+            .launchIn(samplesScope)
+    }
+
+    fun noComposition() {
+        data class CandidateData(val number: Long, val isLikelyPrime: Boolean)
+
+        (1..10).asFlow()
+            .map { it.toLong() }
+            .onEach { delay(500) }
+            .flatMapMerge { candidate ->
+                flow {
+                    delay(1000)
+                    val asBigInt = BigInteger.valueOf(candidate)
+                    val isLikelyPrime = asBigInt.isProbablePrime(10_000)
+                    val candidateData = CandidateData(candidate, isLikelyPrime)
+                    emit(candidateData)
+                }
+            }
+            .flowOn(Dispatchers.Default)
+            .onEach { output(it) }
             .launchIn(samplesScope)
     }
 }
