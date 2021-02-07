@@ -10,13 +10,19 @@ import androidx.lifecycle.lifecycleScope
 import com.github.pksokolowski.coroutinesfun.databinding.FragmentFlowsBinding
 import com.github.pksokolowski.coroutinesfun.utils.observe
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
+@FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class FlowsFragment : Fragment() {
     private val viewModel: FlowsViewModel by viewModels()
+
+    private val startedScope = CoroutineScope(Dispatchers.Main.immediate)
+
+    private val sharedFlow = MutableSharedFlow<Int>()
+    private var nextItemNumber = 0
 
     private var _binding: FragmentFlowsBinding? = null
     private val binding get() = _binding!!
@@ -30,6 +36,16 @@ class FlowsFragment : Fragment() {
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        observeEmissionsToParallelStream()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        startedScope.coroutineContext.cancelChildren()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -41,6 +57,22 @@ class FlowsFragment : Fragment() {
         observeUserData()
         observeEventsAndState()
         setupOnClickListeners()
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private fun observeEmissionsToParallelStream() {
+        sharedFlow
+            .flatMapMerge(Runtime.getRuntime().availableProcessors()) { item ->
+                flow {
+                    Thread.sleep(1000)
+                    emit(item)
+                }
+            }
+            // this is for experimental purposes (non-main thread work in presentation layer)
+            // usually not necessarily the best practice
+            .flowOn(Dispatchers.Default)
+            .onEach { binding.parallelFlowOutput.text = "$it" }
+            .launchIn(startedScope)
     }
 
     private fun observeEventsAndState() {
@@ -100,6 +132,12 @@ class FlowsFragment : Fragment() {
             output("simulating view re-creation")
             removeEventsAndStateObservers()
             observeEventsAndState()
+        }
+
+        binding.emit.setOnClickListener {
+            lifecycleScope.launchWhenStarted {
+                sharedFlow.emit(nextItemNumber++)
+            }
         }
     }
 

@@ -23,6 +23,8 @@
     <string name="flows_button_resubscribe">resubscribe</string>
     <string name="flows_button_send_single_event">send single sharedFlow event</string>
     <string name="flows_button_send_alternative_single_event">send alternative single event</string>
+    <string name="flows_emitter_explanation">click emit to generate SharedFlow items to be processed in parallel, each takes 1 second to process.</string>
+    <string name="flows_button_emit">emit</string>
 
     <string name="persistence_input_hint_description">animal description</string>
     <string name="persistence_input_hint_name">animal name</string>

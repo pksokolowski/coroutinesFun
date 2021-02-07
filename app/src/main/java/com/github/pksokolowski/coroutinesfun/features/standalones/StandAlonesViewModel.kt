@@ -868,10 +868,10 @@ class StandAlonesViewModel @ViewModelInject constructor(
                         ParallelExecMode.FLOW -> {
 
                             getUserIds().asFlow()
-                                .flatMapMerge {
+                                .flatMapMerge(Runtime.getRuntime().availableProcessors()) {
                                     flow { emit(getUser(it)) }
                                 }
-                                .flatMapMerge {
+                                .flatMapMerge(Runtime.getRuntime().availableProcessors()) {
                                     flow<Unit> { saveUserToCache(it) }
                                 }
                                 .launchIn(this)
@@ -1117,7 +1117,15 @@ class StandAlonesViewModel @ViewModelInject constructor(
      * It appears that for non-reusable chains of operators, it doesn't look any more readable
      * to take such streams apart, also the risk of hiding important information on their behavior
      * is quite real, like when flowOn is called in such an operators chain.
+     *
+     * Note that thread sleep is used instead of a suspending delay, this is to give a fair
+     * chance to the availableProcessors() return value of concurrency, which otherwise - with
+     * suspension - would lose against the default - at the time of writing - 16 concurrency value
+     * in flatMapMerge operator. With delay, additional concurrency would of course help, as
+     * the delay time would not block any thread; here, however, we aim to simulate CPU-intensive
+     * work, so Thread.sleep is a better match.
      */
+    @Suppress("BlockingMethodInNonBlockingContext")
     fun composition() {
         data class CandidateData(val number: Long, val isLikelyPrime: Boolean)
 
@@ -1126,9 +1134,9 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 .map { it.toLong() }
 
         fun Flow<Long>.filterProbablePrimes(): Flow<CandidateData> =
-            this.flatMapMerge { candidate ->
+            this.flatMapMerge(Runtime.getRuntime().availableProcessors()) { candidate ->
                 flow {
-                    delay(1000)
+                    Thread.sleep(1000)
                     val asBigInt = BigInteger.valueOf(candidate)
                     val isLikelyPrime = asBigInt.isProbablePrime(10_000)
                     val candidateData = CandidateData(candidate, isLikelyPrime)
@@ -1143,14 +1151,15 @@ class StandAlonesViewModel @ViewModelInject constructor(
             .launchIn(samplesScope)
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     fun noComposition() {
         data class CandidateData(val number: Long, val isLikelyPrime: Boolean)
 
         (1..10).asFlow()
             .map { it.toLong() }
-            .flatMapMerge { candidate ->
+            .flatMapMerge(Runtime.getRuntime().availableProcessors()) { candidate ->
                 flow {
-                    delay(1000)
+                    Thread.sleep(1000)
                     val asBigInt = BigInteger.valueOf(candidate)
                     val isLikelyPrime = asBigInt.isProbablePrime(10_000)
                     val candidateData = CandidateData(candidate, isLikelyPrime)
@@ -1165,6 +1174,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
     /**
      * Similar to [noComposition] and [composition] but done without flows.
      */
+    @Suppress("BlockingMethodInNonBlockingContext")
     fun noFlowNoComposition() {
         data class CandidateData(val number: Long, val isLikelyPrime: Boolean)
 
@@ -1172,7 +1182,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
             (1..10).map {
                 val candidate = it.toLong()
                 async(Dispatchers.Default) {
-                    delay(1000)
+                    Thread.sleep(1000)
                     val asBigInt = BigInteger.valueOf(candidate)
                     val isLikelyPrime = asBigInt.isProbablePrime(10_000)
                     val candidateData = CandidateData(candidate, isLikelyPrime)
