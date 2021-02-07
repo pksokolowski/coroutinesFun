@@ -1193,8 +1193,31 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 output("emitted $it")
             }
         }
+            // can specify other numbers of items to be buffered from the upstream before
+            // upstream is suspended until downstream catches up.
             .buffer(0)
             .shareIn(samplesScope, SharingStarted.Lazily)
+
+        shared
+            .onEach {
+                output("handling $it")
+                delay(1000)
+            }
+            .launchIn(samplesScope)
+    }
+
+    fun sharedFlowWithNoBackPressure() {
+        val shared = flow {
+            repeat(10) {
+                emit(it)
+                output("emitted $it")
+            }
+        }
+            // conflate changes the onBufferOverflow policy from the default "suspend" to
+            // drop oldest. Note that replay can be set above 1 to buffer more latest items
+            //  this is because buffer is set to max(extraBufferCapacity, replay)
+            .conflate()
+            .shareIn(samplesScope, SharingStarted.Lazily, replay = 0)
 
         shared
             .onEach {

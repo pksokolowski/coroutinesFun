@@ -124,6 +124,7 @@ class StandAlonesFragment : Fragment() {
         "no-composition" to { viewModel.noComposition() },
         "no-flows no-composition" to { viewModel.noFlowNoComposition() },
         "shared-with-backpressure" to { viewModel.sharedFlowWithBackPressure() },
+        "shared-with-no-backpressure" to { viewModel.sharedFlowWithNoBackPressure() },
     )
 
     @SuppressLint("SetTextI18n")
