@@ -1236,4 +1236,26 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
             .launchIn(samplesScope)
     }
+
+    fun parallelMapOperator() {
+
+        fun heavyComputation(item: Int): Int {
+            Thread.sleep(1000)
+            return item * 2
+        }
+
+        samplesScope.launch {
+            measureCoroutineTimeMillis {
+
+                (1..10).asFlow()
+                    .mapConcurrently { heavyComputation(it) }
+                    .flowOn(Dispatchers.Default)
+                    .onEach { output("handled $it") }
+                    .launchIn(this)
+
+            }.also {
+                output("--- took: $it")
+            }
+        }
+    }
 }

@@ -1,9 +1,8 @@
 package com.github.pksokolowski.coroutinesfun.features.standalones
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 
 fun <T> Flow<T>.filterDoubleTap(periodMillis: Long): Flow<Unit> {
     require(periodMillis > 0) { "Double tap acceptance period should be positive" }
@@ -38,3 +37,11 @@ fun <T> Flow<T>.filterDoubleTapAlternative(periodMillis: Long): Flow<Unit> {
         }
     }
 }
+
+@FlowPreview
+fun <T, R> Flow<T>.mapConcurrently(block: (T) -> R): Flow<R> =
+    this.flatMapMerge(Runtime.getRuntime().availableProcessors()) { item ->
+        flow {
+            emit(block(item))
+        }
+    }

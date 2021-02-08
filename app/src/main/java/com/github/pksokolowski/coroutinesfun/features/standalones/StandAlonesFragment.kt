@@ -125,6 +125,7 @@ class StandAlonesFragment : Fragment() {
         "no-flows no-composition" to { viewModel.noFlowNoComposition() },
         "shared-with-backpressure" to { viewModel.sharedFlowWithBackPressure() },
         "shared-with-no-backpressure" to { viewModel.sharedFlowWithNoBackPressure() },
+        "map concurrently operator" to { viewModel.parallelMapOperator() },
     )
 
     @SuppressLint("SetTextI18n")
