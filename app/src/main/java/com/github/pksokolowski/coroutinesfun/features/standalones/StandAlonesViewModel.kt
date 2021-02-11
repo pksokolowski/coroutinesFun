@@ -1258,4 +1258,30 @@ class StandAlonesViewModel @ViewModelInject constructor(
             }
         }
     }
+
+    fun suspendLambdaSample() {
+        output("suspending lambda type shorthand sample\n")
+
+        suspend fun runIf(condition: Boolean, block: suspend () -> Unit) {
+            if (!condition) return
+            block()
+        }
+
+        val lambda = {
+            output("This would not fit")
+        }
+
+        val lambdaWithExplicitType: suspend () -> Unit = {
+            output("This would fit, but is verbose")
+        }
+
+        val suspendingLambda = suspend {
+            output("This one fits")
+        }
+
+        samplesScope.launch {
+            runIf(true, suspendingLambda)
+        }
+
+    }
 }
