@@ -97,8 +97,12 @@ class StandAlonesViewModel @ViewModelInject constructor(
         }
 
         samplesScope.launch(Dispatchers.IO + handler) {
-            val userName = getUserNameById(1500)
-            output("Username = $userName")
+            supervisorScope {
+                launch {
+                    val userName = getUserNameById(1500)
+                    output("Username = $userName")
+                }
+            }
         }
     }
 
