@@ -973,6 +973,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
         samplesScope.launch(exceptionHandler) {
             supervisorScope {
                 output("when using SupervisorJob and throwing exception in an async's block, cancellation propagates and cancels the entire samplesScope for good, it will silently fail to run any coroutines from that point on\n")
+                output("That is because the await re-throws the exception, and it resides in the superVisor scope itself, so it will cancel the supervisor scope, unlike if the exception was thrown in a child-scope.\n")
                 launch {
                     delay(1000)
                     output("A sibling coroutine survived and executed!")
@@ -999,7 +1000,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
         samplesScope.launch(exceptionHandler) {
             // prevents cancellation of the entire scope.
             supervisorScope {
-                output("when using SupervisorJob and throwing exception in an async's block, cancellation propagates and cancels the entire samplesScope for good, it will silently fail to run any coroutines from that point on\n")
+                output("when using SupervisorJob and throwing exception in an async's block, failure is not propagated because supervisorJob survives the child-failure and preserves its siblings, as well as .await call on Deferred is surrounded with try-catch block, so re-thrown exception there doesnt cancel the supervisor scope\n")
                 launch {
                     delay(1000)
                     output("A sibling coroutine survived and executed!")
