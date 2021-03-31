@@ -59,8 +59,10 @@ dependencies {
 
     implementation deps.coroutines.core
     implementation deps.coroutines.android
+    testImplementation deps.coroutines.test
 
     implementation deps.lifecycle.livedata_ktx
+    implementation deps.lifecycle.java8
 
     implementation deps.navigation.fragment_ktx
     implementation deps.navigation.ui_ktx

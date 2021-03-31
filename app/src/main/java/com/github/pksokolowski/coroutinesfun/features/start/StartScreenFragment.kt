@@ -37,6 +37,10 @@ class StartScreenFragment(
             findNavController().navigate(R.id.action_startScreenFragment_to_flowsFragment)
         }
 
+        binding.testableButton.setOnClickListener {
+            findNavController().navigate(R.id.action_startScreenFragment_to_testableFragment)
+        }
+
         binding.downloadsButton.setOnClickListener {
             findNavController().navigate(R.id.action_startScreenFragment_to_downloadsFragment)
         }
