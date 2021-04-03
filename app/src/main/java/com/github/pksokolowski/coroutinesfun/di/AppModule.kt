@@ -6,6 +6,9 @@ import com.github.pksokolowski.coroutinesfun.db.AppDatabase
 import com.github.pksokolowski.coroutinesfun.db.dao.AnimalsDao
 import com.github.pksokolowski.coroutinesfun.db.dao.PrimeCandidateDao
 import com.github.pksokolowski.coroutinesfun.features.standalones.BackgroundWorkUseCase
+import com.github.pksokolowski.coroutinesfun.features.testable.db.IItemsRepository
+import com.github.pksokolowski.coroutinesfun.features.testable.db.ItemsDao
+import com.github.pksokolowski.coroutinesfun.features.testable.db.ItemsRepository
 import com.github.pksokolowski.coroutinesfun.repository.AnimalsRepository
 import com.github.pksokolowski.coroutinesfun.repository.PrimeCandidatesRepository
 import com.github.pksokolowski.coroutinesfun.repository.implementations.AnimalsRepositoryImpl
@@ -49,6 +52,11 @@ object AppModule {
     }
 
     @Provides
+    fun providesItemsDao(db: AppDatabase): ItemsDao {
+        return db.itemsDao()
+    }
+
+    @Provides
     fun providesAnimalsRepository(animalsDao: AnimalsDao): AnimalsRepository {
         return AnimalsRepositoryImpl(animalsDao)
     }
@@ -56,6 +64,11 @@ object AppModule {
     @Provides
     fun providesPrimeCandidatesRepository(primeCandidateDao: PrimeCandidateDao): PrimeCandidatesRepository {
         return PrimeCandidatesRepositoryImpl(primeCandidateDao)
+    }
+
+    @Provides
+    fun providesItemsRepository(itemsDao: ItemsDao): IItemsRepository {
+        return ItemsRepository(itemsDao)
     }
 
     @Provides
