@@ -8,14 +8,15 @@ import com.github.pksokolowski.coroutinesfun.db.dao.PrimeCandidateDao
 import com.github.pksokolowski.coroutinesfun.db.dto.AnimalDto
 import com.github.pksokolowski.coroutinesfun.db.dto.PrimeCandidateDto
 import com.github.pksokolowski.coroutinesfun.features.testable.db.ItemsDao
+import com.github.pksokolowski.coroutinesfun.features.testable.model.Item
 
 @Database(
     entities = [
         AnimalDto::class,
         PrimeCandidateDto::class,
-        ItemsDao::class
+        Item::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
