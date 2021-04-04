@@ -7,27 +7,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import javax.inject.Qualifier
-import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
 @Module
 object NetworkModule {
 
-    @Singleton
     @Provides
-    @NetworkDispatcher
-    fun providesNetworkDispatcher(): CoroutineDispatcher {
-        return Dispatchers.IO
-    }
-
-    @Provides
-    fun providesItemsApi(@NetworkDispatcher networkDispatcher: CoroutineDispatcher): IItemsApi {
+    fun providesItemsApi(@IoDispatcher networkDispatcher: CoroutineDispatcher): IItemsApi {
         return ItemsApi(networkDispatcher)
     }
 }
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class NetworkDispatcher

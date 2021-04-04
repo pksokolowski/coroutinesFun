@@ -18,6 +18,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
@@ -67,8 +68,11 @@ object AppModule {
     }
 
     @Provides
-    fun providesItemsRepository(itemsDao: ItemsDao): IItemsRepository {
-        return ItemsRepository(itemsDao)
+    fun providesItemsRepository(
+        itemsDao: ItemsDao,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): IItemsRepository {
+        return ItemsRepository(itemsDao, ioDispatcher)
     }
 
     @Provides

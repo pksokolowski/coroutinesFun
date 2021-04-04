@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "c687b3fac8eeea4dd6e3cb888eabc8b2",
+    "identityHash": "d750ab2ecf5de8809b1f973acd2f7137",
     "entities": [
       {
         "tableName": "animals",
@@ -70,11 +70,17 @@
       },
       {
         "tableName": "items",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `price` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `category_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `price` TEXT NOT NULL, `items_list_version` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category_id",
+            "columnName": "category_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -88,6 +94,12 @@
             "fieldPath": "price",
             "columnName": "price",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "itemsListVersion",
+            "columnName": "items_list_version",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -104,7 +116,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c687b3fac8eeea4dd6e3cb888eabc8b2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd750ab2ecf5de8809b1f973acd2f7137')"
     ]
   }
 }
