@@ -7,7 +7,7 @@ import java.math.BigDecimal
 
 @Entity(tableName = "items")
 data class Item(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "id")
     val id: Long = 0,
 
@@ -17,9 +17,12 @@ data class Item(
     @ColumnInfo(name = "name")
     val name: String = "",
 
-    @ColumnInfo(name = "price")
-    val price: BigDecimal = BigDecimal.ZERO,
+    @ColumnInfo(name = "description")
+    val description: String = "",
 
-    @ColumnInfo(name = "items_list_version")
-    val itemsListVersion: Long,
+    @ColumnInfo(name = "icon_address")
+    val icon_address: String = "",
+
+    @ColumnInfo(name = "price")
+    val price: BigDecimal = BigDecimal.ZERO
 )

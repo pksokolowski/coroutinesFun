@@ -1,7 +1,7 @@
 package com.github.pksokolowski.coroutinesfun.di
 
-import com.github.pksokolowski.coroutinesfun.features.testable.api.IItemsApi
-import com.github.pksokolowski.coroutinesfun.features.testable.api.ItemsApi
+import com.github.pksokolowski.coroutinesfun.features.testable.api.IStoreApi
+import com.github.pksokolowski.coroutinesfun.features.testable.api.StoreApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,7 +13,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 object NetworkModule {
 
     @Provides
-    fun providesItemsApi(@IoDispatcher networkDispatcher: CoroutineDispatcher): IItemsApi {
-        return ItemsApi(networkDispatcher)
+    fun providesItemsApi(@IoDispatcher networkDispatcher: CoroutineDispatcher): IStoreApi {
+        return StoreApi(networkDispatcher)
     }
 }
