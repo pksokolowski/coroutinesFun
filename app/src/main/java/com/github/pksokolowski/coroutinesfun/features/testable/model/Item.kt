@@ -7,7 +7,6 @@ import java.math.BigDecimal
 
 @Entity(tableName = "items")
 data class Item(
-    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "id")
     val id: Long = 0,
 

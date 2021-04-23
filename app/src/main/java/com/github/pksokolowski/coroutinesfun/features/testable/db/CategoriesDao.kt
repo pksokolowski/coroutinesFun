@@ -17,6 +17,21 @@ interface CategoriesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(Categories: List<Category>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(Categories: Category)
+
     @Query("DELETE FROM categories")
     fun nukeTable()
+
+    @Query("UPDATE categories SET category_version = :currentVersion WHERE id = :id ")
+    fun updateCurrentVersion(id: Long, currentVersion: Long)
+
+    @Query("UPDATE categories SET cached_version = :cachedVersion WHERE id = :id ")
+    fun updateCachedVersion(id: Long, cachedVersion: Long)
+
+    @Query("UPDATE categories SET cached_version = :cachedVersion WHERE id = :id ")
+    fun updateExceptCachedVersion(id: Long, cachedVersion: Long)
+
+    @Query("DELETE FROM categories WHERE id = :id ")
+    fun delete(id: Long)
 }

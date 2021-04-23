@@ -1,6 +1,6 @@
 package com.github.pksokolowski.coroutinesfun.features.testable.api
 
-import com.github.pksokolowski.coroutinesfun.features.testable.model.Category
+import com.github.pksokolowski.coroutinesfun.features.testable.api.responses.CategoryDto
 import com.github.pksokolowski.coroutinesfun.features.testable.model.Item
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -11,10 +11,10 @@ class StoreApi(
     private val networkDispatcher: CoroutineDispatcher
 ) : IStoreApi {
     private val categories = listOf(
-        Category(1, "Furniture", 1),
-        Category(2, "Literature", 4),
-        Category(3, "Home utils", 6),
-        Category(4, "Sports", 1),
+        CategoryDto(1, "Furniture", 1),
+        CategoryDto(2, "Literature", 4),
+        CategoryDto(3, "Home utils", 6),
+        CategoryDto(4, "Sports", 1),
     )
 
     private val items = listOf(
@@ -26,7 +26,7 @@ class StoreApi(
     )
 
     override suspend fun getAllItems() = withContext(networkDispatcher) {
-        delay(2500)
+        delay(4500)
         items
     }
 
@@ -35,13 +35,13 @@ class StoreApi(
         items.filter { it.category_id == categoryId }
     }
 
-    override suspend fun getCategories(): List<Category> {
+    override suspend fun getCategories(): List<CategoryDto> {
         delay(120)
         return categories
     }
 
     override suspend fun getCategoryVersion(categoryId: Long): Long? {
         delay(80)
-        return categories.find { it.id == categoryId }?.categoryVersion
+        return categories.find { it.id == categoryId }?.currentVersion
     }
 }
