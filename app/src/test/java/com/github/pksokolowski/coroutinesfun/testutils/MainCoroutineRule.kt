@@ -1,9 +1,7 @@
 package com.github.pksokolowski.coroutinesfun.testutils
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.*
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
@@ -19,4 +17,7 @@ class MainCoroutineRule() : TestWatcher() {
         Dispatchers.resetMain()
         testDispatcher.cleanupTestCoroutines()
     }
+
+    fun runBlockingTest(block: suspend TestCoroutineScope.() -> Unit) =
+        testDispatcher.runBlockingTest(block)
 }
