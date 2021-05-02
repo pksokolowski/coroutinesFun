@@ -2,6 +2,7 @@ package com.github.pksokolowski.coroutinesfun.features.testable.db
 
 import com.github.pksokolowski.coroutinesfun.features.testable.api.IStoreApi
 import com.github.pksokolowski.coroutinesfun.features.testable.api.responses.CategoryDto
+import com.github.pksokolowski.coroutinesfun.features.testable.model.Category
 import com.github.pksokolowski.coroutinesfun.features.testable.model.Item
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -29,13 +30,14 @@ class StoreRepository(
 
         if (currentVersion == cached?.cachedVersion) return@withContext cached
 
-        val fromApi = storeApi.getCategories()
-            .firstOrNull { it.id == categoryId }?.to
+        val categoryInfo = storeApi.getCategories()
+            .firstOrNull { it.id == categoryId }?.toCategory()
             ?: cached
+            ?: return@withContext null
 
-        categoriesDao.insert(fromApi)
+        categoriesDao.insert(categoryInfo)
 
-        fromApi
+        categoryInfo
     }
 
     private suspend fun getCategories() = withContext(ioDispatcher) {
@@ -44,11 +46,11 @@ class StoreRepository(
         if (cached == fromApi) return@withContext fromApi
 
         categoriesDao.nukeTable()
-        categoriesDao.insert(cached.)
+        categoriesDao.insert(cached)
         fromApi
     }
 
-    private fun CategoryDto.toCategory(){
-
+    private fun CategoryDto.toCategory(): Category {
+        return Category(id, name, currentVersion, 0)
     }
 }
