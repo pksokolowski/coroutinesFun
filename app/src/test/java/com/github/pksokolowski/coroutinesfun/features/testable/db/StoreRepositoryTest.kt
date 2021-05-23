@@ -27,6 +27,65 @@ class StoreRepositoryTest {
             assertEquals(expectedCats, cats)
         }
 
+    @Test
+    fun `cached items are used when up to date`() =
+        coroutineRule.runBlockingTest {
+
+            storeApi.items = mutableListOf()
+            storeApi.categories = mutableListOf(CategoryDto(1, "things", 2))
+            categoriesDao.categories = mutableListOf(Category(1, "things", 2, 2))
+            itemsDao.items = mutableListOf(Item(1, 1, "thing", "haha", "none", 10.toBigDecimal()))
+
+            val items = sut.getItemsByCategory(1)
+            val expectedItems = listOf(
+                Item(1, 1, "thing", "haha", "none", 10.toBigDecimal())
+            )
+            assertEquals(expectedItems, items)
+        }
+
+    @Test
+    fun `new items are fetched when cache is not up to date`() =
+        coroutineRule.runBlockingTest {
+
+            storeApi.items = mutableListOf(
+                Item(2, 1, "new thing", "hehe", "none", 20.toBigDecimal())
+            )
+            storeApi.categories = mutableListOf(CategoryDto(1, "things", 3))
+            categoriesDao.categories = mutableListOf(Category(1, "things", 2, 2))
+            itemsDao.items = mutableListOf(Item(1, 1, "thing", "haha", "none", 10.toBigDecimal()))
+
+            val items = sut.getItemsByCategory(1)
+            val expectedItems = listOf(
+                Item(2, 1, "new thing", "hehe", "none", 20.toBigDecimal())
+            )
+            assertEquals(expectedItems, items)
+        }
+
+    @Test
+    fun `subsequent request, after cache refresh, uses cache`() =
+        coroutineRule.runBlockingTest {
+
+            storeApi.items = mutableListOf(
+                Item(2, 1, "new thing", "hehe", "none", 20.toBigDecimal())
+            )
+            storeApi.categories = mutableListOf(CategoryDto(1, "things", 3))
+            categoriesDao.categories = mutableListOf(Category(1, "things", 3, 2))
+            itemsDao.items = mutableListOf(Item(1, 1, "thing", "haha", "none", 10.toBigDecimal()))
+
+            sut.getItemsByCategory(1)
+
+            // the subsequent requests
+            // first we remove the item from api to be able to detect if it was used trivially.
+            storeApi.items.clear()
+
+            val items = sut.getItemsByCategory(1)
+            val expectedItems = listOf(
+                Item(2, 1, "new thing", "hehe", "none", 20.toBigDecimal())
+            )
+            assertEquals(expectedItems, items)
+        }
+
+
     @get:Rule
     val coroutineRule = MainCoroutineRule()
 

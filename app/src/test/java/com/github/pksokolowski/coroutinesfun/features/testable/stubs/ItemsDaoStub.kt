@@ -3,7 +3,7 @@ package com.github.pksokolowski.coroutinesfun.features.testable.stubs
 import com.github.pksokolowski.coroutinesfun.features.testable.db.ItemsDao
 import com.github.pksokolowski.coroutinesfun.features.testable.model.Item
 
-class ItemsDaoStub(val items: MutableList<Item> = mutableListOf()) : ItemsDao {
+class ItemsDaoStub(var items: MutableList<Item> = mutableListOf()) : ItemsDao {
     override suspend fun getAllItems(): List<Item> {
         return items
     }

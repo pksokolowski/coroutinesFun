@@ -17,13 +17,17 @@ class StoreRepository(
 
     suspend fun getItemsByCategory(categoryId: Long) = withContext(ioDispatcher) {
         val category = categoriesDao.getCategoryById(categoryId)
-        if (category == null || category.cachedVersion != category.categoryVersion) {
-            // update cache
+        val currentVersion =
+            storeApi.getCategoryVersion(categoryId) ?: return@withContext listOf()
+
+        if (category == null || category.cachedVersion != currentVersion) {
+
             val freshItems = storeApi.getItemsFromCategory(categoryId)
             itemsDao.removeItemsFromCategory(categoryId)
             itemsDao.insertItems(freshItems)
+            categoriesDao.updateCachedVersion(categoryId, currentVersion)
         }
-        val items = itemsDao.getItemsByCategory(categoryId)
+        itemsDao.getItemsByCategory(categoryId)
     }
 
     suspend fun getCategories() = withContext(ioDispatcher) {

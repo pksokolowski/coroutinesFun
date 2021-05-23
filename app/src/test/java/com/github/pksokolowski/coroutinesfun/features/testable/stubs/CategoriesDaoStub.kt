@@ -3,7 +3,7 @@ package com.github.pksokolowski.coroutinesfun.features.testable.stubs
 import com.github.pksokolowski.coroutinesfun.features.testable.db.CategoriesDao
 import com.github.pksokolowski.coroutinesfun.features.testable.model.Category
 
-class CategoriesDaoStub(val categories: MutableList<Category> = mutableListOf()) : CategoriesDao {
+class CategoriesDaoStub(var categories: MutableList<Category> = mutableListOf()) : CategoriesDao {
     override suspend fun getCategoryById(id: Long): Category? {
         return categories.find { it.id == id }
     }
