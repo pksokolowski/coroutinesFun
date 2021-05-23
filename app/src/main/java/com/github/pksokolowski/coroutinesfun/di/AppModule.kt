@@ -6,9 +6,11 @@ import com.github.pksokolowski.coroutinesfun.db.AppDatabase
 import com.github.pksokolowski.coroutinesfun.db.dao.AnimalsDao
 import com.github.pksokolowski.coroutinesfun.db.dao.PrimeCandidateDao
 import com.github.pksokolowski.coroutinesfun.features.standalones.BackgroundWorkUseCase
-import com.github.pksokolowski.coroutinesfun.features.testable.db.IItemsRepository
+import com.github.pksokolowski.coroutinesfun.features.testable.api.IStoreApi
+import com.github.pksokolowski.coroutinesfun.features.testable.db.CategoriesDao
+import com.github.pksokolowski.coroutinesfun.features.testable.db.IStoreRepository
 import com.github.pksokolowski.coroutinesfun.features.testable.db.ItemsDao
-import com.github.pksokolowski.coroutinesfun.features.testable.db.ItemsRepository
+import com.github.pksokolowski.coroutinesfun.features.testable.db.StoreRepository
 import com.github.pksokolowski.coroutinesfun.repository.AnimalsRepository
 import com.github.pksokolowski.coroutinesfun.repository.PrimeCandidatesRepository
 import com.github.pksokolowski.coroutinesfun.repository.implementations.AnimalsRepositoryImpl
@@ -18,6 +20,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
@@ -57,6 +60,11 @@ object AppModule {
     }
 
     @Provides
+    fun providesCategoriesDao(db: AppDatabase): CategoriesDao {
+        return db.categoriesDao()
+    }
+
+    @Provides
     fun providesAnimalsRepository(animalsDao: AnimalsDao): AnimalsRepository {
         return AnimalsRepositoryImpl(animalsDao)
     }
@@ -67,8 +75,13 @@ object AppModule {
     }
 
     @Provides
-    fun providesItemsRepository(itemsDao: ItemsDao): IItemsRepository {
-        return ItemsRepository(itemsDao)
+    fun providesItemsRepository(
+        storeApi: IStoreApi,
+        itemsDao: ItemsDao,
+        categoriesDao: CategoriesDao,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): IStoreRepository {
+        return StoreRepository(storeApi, itemsDao, categoriesDao, ioDispatcher)
     }
 
     @Provides

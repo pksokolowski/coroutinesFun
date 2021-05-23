@@ -2,12 +2,10 @@ package com.github.pksokolowski.coroutinesfun.features.testable.presentation
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
-import com.github.pksokolowski.coroutinesfun.features.testable.db.IItemsRepository
-import kotlinx.coroutines.CoroutineDispatcher
+import com.github.pksokolowski.coroutinesfun.features.testable.db.IStoreRepository
 
 class TestableViewModel @ViewModelInject constructor(
-    private val backGroundDispatcher: CoroutineDispatcher,
-    private val itemsRepository: IItemsRepository
+    private val storeRepository: IStoreRepository
 ) : ViewModel() {
 
 }
