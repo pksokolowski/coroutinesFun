@@ -17,5 +17,12 @@ data class Category(
     val categoryVersion: Long = 0,
 
     @ColumnInfo(name = "cached_version")
-    val cachedVersion: Long = 0,
-)
+    val cachedVersion: Long = -1,
+) {
+    fun withCurrentVersion(versionToSet: Long) = Category(id, name, versionToSet, cachedVersion)
+
+    fun withCachedVersion(versionToSet: Long) = Category(id, name, categoryVersion, versionToSet)
+
+    fun withCachedVersionRetained(newState: Category) =
+        Category(newState.id, newState.name, newState.categoryVersion, cachedVersion)
+}

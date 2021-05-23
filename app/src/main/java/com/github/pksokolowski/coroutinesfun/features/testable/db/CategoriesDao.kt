@@ -29,9 +29,6 @@ interface CategoriesDao {
     @Query("UPDATE categories SET cached_version = :cachedVersion WHERE id = :id ")
     fun updateCachedVersion(id: Long, cachedVersion: Long)
 
-    @Query("UPDATE categories SET cached_version = :cachedVersion WHERE id = :id ")
-    fun updateExceptCachedVersion(id: Long, cachedVersion: Long)
-
     @Query("DELETE FROM categories WHERE id = :id ")
     fun delete(id: Long)
 }

@@ -16,41 +16,38 @@ class StoreRepository(
     suspend fun getItems(): List<Item> = itemsDao.getAllItems()
 
     suspend fun getItemsByCategory(categoryId: Long) = withContext(ioDispatcher) {
-        val category = getFreshCategoryInfo(categoryId)
+        val category = categoriesDao.getCategoryById(categoryId)
+        if (category == null || category.cachedVersion != category.categoryVersion) {
+            // update cache
+            val freshItems = storeApi.getItemsFromCategory(categoryId)
+            itemsDao.removeItemsFromCategory(categoryId)
+            itemsDao.insertItems(freshItems)
+        }
         val items = itemsDao.getItemsByCategory(categoryId)
     }
 
-    private suspend fun getFreshCategoryInfo(categoryId: Long) = withContext(ioDispatcher) {
-        val cached = categoriesDao.getCategoryById(categoryId)
+    suspend fun getCategories() = withContext(ioDispatcher) {
+        val freshCats = storeApi.getCategories()
+            .map {
+                it.toCategory()
+            }
 
-        val currentVersion = storeApi.getCategoryVersion(categoryId) ?: run {
-            categoriesDao.delete(categoryId)
-            return@withContext null
-        }
+        val cachedCats = categoriesDao.getAllCategories()
+            .associateBy { it.id }
 
-        if (currentVersion == cached?.cachedVersion) return@withContext cached
-
-        val categoryInfo = storeApi.getCategories()
-            .firstOrNull { it.id == categoryId }?.toCategory()
-            ?: cached
-            ?: return@withContext null
-
-        categoriesDao.insert(categoryInfo)
-
-        categoryInfo
-    }
-
-    private suspend fun getCategories() = withContext(ioDispatcher) {
-        val cached = categoriesDao.getAllCategories()
-        val fromApi = storeApi.getCategories()
-        if (cached == fromApi) return@withContext fromApi
+        val updated = freshCats
+            .map {
+                val cached = cachedCats[it.id] ?: return@map it
+                cached.withCachedVersionRetained(it)
+            }
 
         categoriesDao.nukeTable()
-        categoriesDao.insert(cached)
-        fromApi
+        categoriesDao.insert(updated)
+
+        updated
     }
 
     private fun CategoryDto.toCategory(): Category {
-        return Category(id, name, currentVersion, 0)
+        return Category(id, name, currentVersion)
     }
 }

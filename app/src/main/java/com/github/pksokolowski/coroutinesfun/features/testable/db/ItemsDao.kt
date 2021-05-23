@@ -14,8 +14,11 @@ interface ItemsDao {
     @Query("SELECT * FROM items WHERE category_id = :category_id ORDER BY id ASC")
     suspend fun getItemsByCategory(category_id: Long): List<Item>
 
+    @Query("DELETE FROM items WHERE category_id = :categoryId")
+    fun removeItemsFromCategory(categoryId: Long)
+
     @Insert
-    suspend fun insertItem(item: Item): Long
+    suspend fun insertItems(item: List<Item>)
 
     @Update
     suspend fun updateItem(item: Item)
