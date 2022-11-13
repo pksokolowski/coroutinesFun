@@ -39,7 +39,7 @@ fun <T> Flow<T>.filterDoubleTapAlternative(periodMillis: Long): Flow<Unit> {
 
 @FlowPreview
 fun <T, R> Flow<T>.mapConcurrently(block: (T) -> R): Flow<R> =
-    this.flatMapMerge(Runtime.getRuntime().availableProcessors()) { item ->
+    flatMapMerge(Runtime.getRuntime().availableProcessors()) { item ->
         flow {
             emit(block(item))
         }

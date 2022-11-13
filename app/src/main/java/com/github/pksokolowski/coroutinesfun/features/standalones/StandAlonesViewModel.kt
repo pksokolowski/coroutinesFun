@@ -1020,7 +1020,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
     }
 
     fun tryCatchExceptionsAndCancellation() {
-        samplesScope.launch() {
+        samplesScope.launch {
             output("when using try-catch around an exception throw, sibling coroutines will be independent from the caught exception \n")
             launch {
                 delay(1000)
@@ -1104,7 +1104,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 emitAll(
                     backupSource
                         .sample(1000)
-                        .takeWhile { !isConnected() }
+                        .takeWhile { isConnected().not() }
                         .onCompletion { emitAll(getWeatherFlow()) }
                 )
             }
@@ -1139,7 +1139,7 @@ class StandAlonesViewModel @ViewModelInject constructor(
                 .map { it.toLong() }
 
         fun Flow<Long>.filterProbablePrimes(): Flow<CandidateData> =
-            this.flatMapMerge(Runtime.getRuntime().availableProcessors()) { candidate ->
+            flatMapMerge(Runtime.getRuntime().availableProcessors()) { candidate ->
                 flow {
                     Thread.sleep(1000)
                     val asBigInt = BigInteger.valueOf(candidate)
